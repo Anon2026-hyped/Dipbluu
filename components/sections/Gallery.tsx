@@ -1,376 +1,120 @@
 'use client'
 
 import Image from 'next/image'
-import { useRef, useState } from 'react'
+import Link from 'next/link'
+import { useState } from 'react'
 import { useCartStore } from '@/features/cart'
 import { formatNgn } from '@/lib/money'
 import type { Artwork } from '@/types'
 
 export function Gallery({ artworks }: { artworks: Artwork[] }) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const addItem = useCartStore((state) => state.addItem)
+  const [addedId, setAddedId] = useState<string | null>(null)
 
-  const scroll = (direction: 'left' | 'right') => {
-    if (containerRef.current) {
-      const scrollAmount = 320
-      containerRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth',
-      })
-    }
-  }
-
-  const ArtworkSVG = ({ id }: { id: string }) => {
-    if (id === 'lion') {
-      return (
-        <svg
-          viewBox="0 0 300 400"
-          width="100%"
-          height="100%"
-          className="w-full h-full"
-          aria-hidden="true"
-        >
-          <defs>
-            <radialGradient id="lionGrad" cx="40%" cy="30%">
-              <stop offset="0%" stopColor="#0c1f4a" />
-              <stop offset="100%" stopColor="#000" />
-            </radialGradient>
-          </defs>
-          <rect width="300" height="400" fill="url(#lionGrad)" />
-          <circle
-            cx="150"
-            cy="130"
-            r="70"
-            fill="none"
-            stroke="#2563eb"
-            strokeWidth="1.5"
-            opacity="0.4"
-          />
-          <path
-            d="M 130 130 Q 100 100 80 110 Q 90 130 100 150 Q 90 170 80 190 Q 100 200 130 180 Q 150 200 170 180 Q 200 200 220 190 Q 210 170 200 150 Q 210 130 200 110 Q 180 100 150 100 Z"
-            fill="none"
-            stroke="#2563eb"
-            strokeWidth="2.2"
-            opacity="0.7"
-          />
-          <circle
-            cx="130"
-            cy="120"
-            r="4"
-            fill="none"
-            stroke="#2563eb"
-            strokeWidth="1"
-            opacity="0.6"
-          />
-          <circle
-            cx="170"
-            cy="120"
-            r="4"
-            fill="none"
-            stroke="#2563eb"
-            strokeWidth="1"
-            opacity="0.6"
-          />
-          <circle cx="150" cy="160" r="3" fill="#c9a84c" opacity="0.4" />
-        </svg>
-      )
-    } else if (id === 'crown') {
-      return (
-        <svg
-          viewBox="0 0 300 400"
-          width="100%"
-          height="100%"
-          className="w-full h-full"
-          aria-hidden="true"
-        >
-          <defs>
-            <radialGradient id="crownGrad" cx="55%" cy="35%">
-              <stop offset="0%" stopColor="#1a0e00" />
-              <stop offset="100%" stopColor="#000" />
-            </radialGradient>
-          </defs>
-          <rect width="300" height="400" fill="url(#crownGrad)" />
-          <circle
-            cx="150"
-            cy="100"
-            r="35"
-            fill="none"
-            stroke="#2563eb"
-            strokeWidth="1"
-            opacity="0.3"
-          />
-          <path
-            d="M 100 200 L 120 140 L 150 100 L 180 140 L 200 200 Z"
-            fill="none"
-            stroke="#c9a84c"
-            strokeWidth="2"
-            opacity="0.7"
-          />
-          <line
-            x1="85"
-            y1="220"
-            x2="215"
-            y2="220"
-            stroke="#c9a84c"
-            strokeWidth="1.5"
-            opacity="0.7"
-          />
-          <rect
-            x="100"
-            y="220"
-            width="100"
-            height="30"
-            fill="none"
-            stroke="#c9a84c"
-            strokeWidth="1.5"
-            opacity="0.7"
-          />
-          <circle
-            cx="150"
-            cy="70"
-            r="8"
-            fill="none"
-            stroke="#c9a84c"
-            strokeWidth="1.5"
-            opacity="0.7"
-          />
-          <circle
-            cx="115"
-            cy="180"
-            r="6"
-            fill="none"
-            stroke="#2563eb"
-            strokeWidth="1"
-            opacity="0.6"
-          />
-          <circle
-            cx="185"
-            cy="180"
-            r="6"
-            fill="none"
-            stroke="#2563eb"
-            strokeWidth="1"
-            opacity="0.6"
-          />
-        </svg>
-      )
-    } else {
-      return (
-        <svg
-          viewBox="0 0 300 400"
-          width="100%"
-          height="100%"
-          className="w-full h-full"
-          aria-hidden="true"
-        >
-          <defs>
-            <radialGradient id="altarGrad" cx="62%" cy="28%">
-              <stop offset="0%" stopColor="#0d1a0d" />
-              <stop offset="100%" stopColor="#000" />
-            </radialGradient>
-          </defs>
-          <rect width="300" height="400" fill="url(#altarGrad)" />
-          <circle
-            cx="150"
-            cy="150"
-            r="50"
-            fill="none"
-            stroke="#2563eb"
-            strokeWidth="1"
-            opacity="0.2"
-            strokeDasharray="2,2"
-          />
-          <rect
-            x="120"
-            y="200"
-            width="60"
-            height="50"
-            fill="none"
-            stroke="#c9a84c"
-            strokeWidth="2"
-            opacity="0.7"
-          />
-          <rect
-            x="110"
-            y="160"
-            width="80"
-            height="40"
-            fill="none"
-            stroke="#2563eb"
-            strokeWidth="1.5"
-            opacity="0.7"
-          />
-          <rect
-            x="100"
-            y="120"
-            width="100"
-            height="40"
-            fill="none"
-            stroke="#2563eb"
-            strokeWidth="1.5"
-            opacity="0.7"
-          />
-          <line
-            x1="150"
-            y1="160"
-            x2="150"
-            y2="100"
-            stroke="#c9a84c"
-            strokeWidth="1.5"
-            opacity="0.7"
-          />
-          <path
-            d="M 140 110 Q 150 95 160 110"
-            fill="none"
-            stroke="#c9a84c"
-            strokeWidth="1.5"
-            opacity="0.7"
-          />
-          <line
-            x1="130"
-            y1="260"
-            x2="170"
-            y2="260"
-            stroke="white"
-            strokeWidth="0.8"
-            opacity="0.6"
-          />
-        </svg>
-      )
-    }
+  const handleAdd = (artwork: Artwork) => {
+    addItem(artwork, 1)
+    setAddedId(artwork.id)
+    setTimeout(() => setAddedId((cur) => (cur === artwork.id ? null : cur)), 1600)
   }
 
   return (
-    <section id="works" className="border-t border-border-default py-20">
+    <section id="works" className="border-border-default border-t py-20 sm:py-28">
       {/* Header */}
-      <div className="px-6 sm:px-12 mb-12 flex items-end justify-between">
-        <div>
-          <h2
-            className="font-bebas text-white mb-2"
-            style={{
-              fontSize: 'clamp(48px, 8vw, 96px)',
-              letterSpacing: '0.06em',
-              lineHeight: '0.9',
-            }}
-          >
-            <div>THE</div>
-            <div>WORKS</div>
-          </h2>
-        </div>
+      <div className="mb-12 px-6 sm:mb-16 sm:px-12">
         <p
-          className="font-garamond italic text-muted max-w-40 text-right"
-          style={{ fontSize: '14px' }}
+          className="mb-4 font-barlow text-blue-bright"
+          style={{ fontSize: '10px', letterSpacing: '0.4em' }}
         >
-          Three pieces. One collection. The full brotherhood.
+          THE COLLECTION
         </p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <h2
+            className="font-bebas text-white leading-[0.85]"
+            style={{ fontSize: 'clamp(56px, 10vw, 130px)', letterSpacing: '0.02em' }}
+          >
+            THE WORKS
+          </h2>
+          <p
+            className="max-w-xs font-garamond text-muted-2 italic sm:text-right"
+            style={{ fontSize: '15px', lineHeight: 1.6 }}
+          >
+            {artworks.length} pieces. One collection. The full brotherhood.
+          </p>
+        </div>
       </div>
 
-      {/* Gallery */}
-      <div className="relative">
-        <div
-          ref={containerRef}
-          className="flex gap-0.5 overflow-x-auto scroll-smooth px-6 sm:px-12"
-          style={{ scrollSnapType: 'x mandatory', scrollBehavior: 'smooth' }}
-        >
-          {artworks.map((artwork, idx) => (
-            // biome-ignore lint/a11y/noStaticElementInteractions: presentational hover only, no keyboard action
-            <div
-              key={artwork.id}
-              className="flex-shrink-0 flex flex-col bg-panel"
-              style={{
-                width: 'clamp(260px, 28vw, 380px)',
-                scrollSnapAlign: 'start',
-              }}
-              onMouseEnter={() => setHoveredIndex(idx)}
-              onMouseLeave={() => setHoveredIndex(null)}
+      {/* Grid */}
+      <div className="grid grid-cols-2 gap-3 px-6 sm:gap-4 sm:px-12 lg:grid-cols-3">
+        {artworks.map((artwork, idx) => (
+          <article key={artwork.id} className="group relative overflow-hidden bg-panel">
+            <Link
+              href={`/art/${artwork.slug}`}
+              className="relative block aspect-[4/5] overflow-hidden"
+              aria-label={`View ${artwork.title}`}
             >
-              {/* Artwork canvas */}
-              <div
-                className="aspect-[3/4] bg-gradient-to-b from-blue-dim/20 to-black flex items-center justify-center relative overflow-hidden"
-                style={{
-                  background:
-                    'radial-gradient(ellipse at center, rgba(37,99,235,0.05), transparent)',
-                }}
-              >
-                <div
-                  className="relative h-full w-full transform transition-transform duration-600 ease-out"
-                  style={{
-                    scale: hoveredIndex === idx ? 1.04 : 1,
-                  }}
-                >
-                  {artwork.imageUrl ? (
-                    <Image
-                      src={artwork.imageUrl}
-                      alt={artwork.title}
-                      fill
-                      sizes="(max-width: 768px) 80vw, 380px"
-                      style={{ objectFit: 'cover' }}
-                    />
-                  ) : (
-                    <ArtworkSVG id={artwork.id} />
-                  )}
+              {artwork.imageUrl ? (
+                <Image
+                  src={artwork.imageUrl}
+                  alt={artwork.title}
+                  fill
+                  sizes="(max-width: 1024px) 50vw, 33vw"
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-gradient-to-b from-blue-dim/20 to-black">
+                  <span className="text-4xl text-blue-bright/50">◻</span>
                 </div>
-              </div>
+              )}
 
-              {/* Info bar */}
-              <div className="border-t border-border-default p-5">
+              {/* Legibility gradient */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/5 to-black/25" />
+
+              {/* Index */}
+              <span className="absolute top-4 left-4 font-bebas text-sm text-white/55 tracking-widest">
+                {String(idx + 1).padStart(2, '0')}
+              </span>
+
+              {/* Gold hover frame */}
+              <span className="pointer-events-none absolute inset-3 border border-gold/0 transition-colors duration-500 group-hover:border-gold/40" />
+
+              {/* Info */}
+              <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
                 <h3
-                  className="font-cinzel text-white mb-1"
-                  style={{
-                    fontSize: '14px',
-                    letterSpacing: '0.12em',
-                  }}
+                  className="translate-y-0 font-cinzel text-white transition-transform duration-500 sm:translate-y-1 sm:group-hover:translate-y-0"
+                  style={{ fontSize: 'clamp(13px, 1.4vw, 16px)', letterSpacing: '0.1em' }}
                 >
                   {artwork.title}
                 </h3>
                 <p
-                  className="font-barlow text-muted text-xs mb-3"
-                  style={{ letterSpacing: '0.28em' }}
+                  className="mt-1 font-barlow text-[10px] text-white/45"
+                  style={{ letterSpacing: '0.24em' }}
                 >
                   {artwork.edition}
                 </p>
-                <div className="flex items-end justify-between">
-                  <p
-                    className="font-bebas text-blue-bright"
-                    style={{
-                      fontSize: '22px',
-                      letterSpacing: '0.06em',
-                    }}
-                  >
-                    {formatNgn(artwork.priceNgnKobo)}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => addItem(artwork, 1)}
-                    className="font-barlow text-muted text-xs border-b border-border-default hover:text-blue-bright hover:border-blue-bright transition-colors"
-                    style={{ letterSpacing: '0.22em' }}
-                  >
-                    ADD TO BAG
-                  </button>
-                </div>
+                <p
+                  className="mt-3 font-bebas text-blue-bright"
+                  style={{ fontSize: '22px', letterSpacing: '0.05em' }}
+                >
+                  {formatNgn(artwork.priceNgnKobo)}
+                </p>
               </div>
-            </div>
-          ))}
-        </div>
+            </Link>
 
-        {/* Navigation arrows */}
-        <div className="absolute bottom-32 right-6 sm:right-12 flex gap-3">
-          <button
-            type="button"
-            onClick={() => scroll('left')}
-            className="w-10 h-10 border border-border-default hover:border-blue-bright flex items-center justify-center transition-colors"
-          >
-            ←
-          </button>
-          <button
-            type="button"
-            onClick={() => scroll('right')}
-            className="w-10 h-10 border border-border-default hover:border-blue-bright flex items-center justify-center transition-colors"
-          >
-            →
-          </button>
-        </div>
+            {/* Add to bag — sibling of the link so it doesn't navigate */}
+            <button
+              type="button"
+              onClick={() => handleAdd(artwork)}
+              aria-label={`Add ${artwork.title} to bag`}
+              className={`absolute top-3 right-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border text-lg backdrop-blur transition-all duration-300 sm:h-10 sm:w-10 ${
+                addedId === artwork.id
+                  ? 'border-gold bg-gold/20 text-gold'
+                  : 'border-white/25 bg-black/50 text-white hover:border-blue-bright hover:bg-blue-bright/20 hover:text-blue-bright'
+              }`}
+            >
+              {addedId === artwork.id ? '✓' : '+'}
+            </button>
+          </article>
+        ))}
       </div>
     </section>
   )

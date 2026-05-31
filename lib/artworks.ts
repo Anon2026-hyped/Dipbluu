@@ -7,6 +7,15 @@ const IMG = 'https://raw.githubusercontent.com/Anon2026-hyped/Boanerges/main'
 // To re-map which photo belongs to which work, change the imageUrl values below.
 export const artworks: Artwork[] = [
   {
+    id: 'herald',
+    slug: 'the-herald',
+    title: 'THE HERALD',
+    edition: 'EDITION OF 111 · BLIND DROP',
+    priceUsdCents: 2200,
+    priceNgnKobo: 3_333_300,
+    imageUrl: `${IMG}/Hero(1).jpg`,
+  },
+  {
     id: 'lion',
     slug: 'the-lion',
     title: 'THE LION',

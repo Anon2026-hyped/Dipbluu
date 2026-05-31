@@ -23,12 +23,12 @@ export function DropInfo() {
             const progress = frame / frames
             setDisplayStats({
               claimed: Math.floor(62 * progress),
-              editions: Math.floor(999 * progress),
-              works: Math.floor(9 * progress),
+              editions: Math.floor(1110 * progress),
+              works: Math.floor(10 * progress),
             })
             if (frame >= frames) {
               clearInterval(interval)
-              setDisplayStats({ claimed: 62, editions: 999, works: 9 })
+              setDisplayStats({ claimed: 62, editions: 1110, works: 10 })
             }
           }, 16)
         }
@@ -122,7 +122,7 @@ export function DropInfo() {
             letterSpacing: '0.18em',
           }}
         >
-          9 WORKS · 999 TOTAL EDITIONS · ₦33,333 EACH
+          10 WORKS · 1,110 TOTAL EDITIONS · ₦33,333 EACH
         </div>
 
         <p
