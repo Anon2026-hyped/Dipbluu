@@ -54,7 +54,12 @@ export function HomeExperience({ artworks }: { artworks: Artwork[] }) {
       <Cursor />
 
       <div className="min-h-screen bg-black text-white">
-        <Navbar onCartClick={handleCartClick} onMenuClick={handleMenuClick} cartCount={cartCount} />
+        <Navbar
+          onCartClick={handleCartClick}
+          onMenuClick={handleMenuClick}
+          cartCount={cartCount}
+          isMenuOpen={isMenuOpen}
+        />
 
         <MenuOverlay isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 

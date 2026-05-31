@@ -8,6 +8,7 @@ interface NavbarProps {
   onCartClick: () => void
   onMenuClick: () => void
   cartCount: number
+  isMenuOpen?: boolean
 }
 
 /* ── Lion Sigil ── */
@@ -209,7 +210,7 @@ function CartIcon() {
 /* ══════════════════════════════════════════════════════════════
    MAIN NAVBAR
 ══════════════════════════════════════════════════════════════ */
-export function Navbar({ onCartClick, onMenuClick, cartCount }: NavbarProps) {
+export function Navbar({ onCartClick, onMenuClick, cartCount, isMenuOpen = false }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false)
   const [menuHover, setMenuHover] = useState(false)
   const [flashSecs, setFlashSecs] = useState(false)
@@ -344,17 +345,19 @@ export function Navbar({ onCartClick, onMenuClick, cartCount }: NavbarProps) {
           </div>
         </a>
 
-        {/* ── CENTRE NAV (md+) ── */}
+        {/* ── CENTRE NAV (lg+) ──
+           Display is controlled by the `hidden lg:flex` classes, NOT inline,
+           otherwise an inline `display: flex` would override `.hidden` and
+           leak the links onto mobile. */}
         <div
           style={{
             position: 'absolute',
             left: '50%',
             transform: 'translateX(-50%)',
-            display: 'flex',
             alignItems: 'center',
             gap: 36,
           }}
-          className="hidden md:flex"
+          className="hidden lg:flex"
         >
           {(
             [
@@ -409,9 +412,9 @@ export function Navbar({ onCartClick, onMenuClick, cartCount }: NavbarProps) {
 
         {/* ── RIGHT CLUSTER ── */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-          {/* Countdown (sm+) */}
+          {/* Countdown (lg+ — kept off phones to avoid clutter; also lives in the Drop section) */}
           <div
-            className="hidden sm:flex"
+            className="hidden lg:flex"
             style={{ flexDirection: 'column', alignItems: 'center', gap: 3 }}
             role="timer"
             aria-label="Drop countdown"
@@ -440,15 +443,15 @@ export function Navbar({ onCartClick, onMenuClick, cartCount }: NavbarProps) {
 
           {/* Divider */}
           <div
-            className="hidden sm:block"
+            className="hidden lg:block"
             style={{ width: 1, height: 18, background: 'rgba(59,130,246,0.13)' }}
             aria-hidden="true"
           />
 
-          {/* Region (sm+) */}
+          {/* Region (lg+) */}
           <button
             type="button"
-            className="hidden sm:block"
+            className="hidden lg:block"
             style={{
               background: 'none',
               border: 'none',
@@ -480,9 +483,11 @@ export function Navbar({ onCartClick, onMenuClick, cartCount }: NavbarProps) {
               background: 'none',
               border: '0.5px solid rgba(59,130,246,0.22)',
               cursor: 'pointer',
-              padding: '6px 10px 6px 8px',
+              padding: '6px 12px',
+              minHeight: 44,
               display: 'flex',
               alignItems: 'center',
+              justifyContent: 'center',
               gap: 7,
               borderRadius: 2,
               transition: 'border-color 0.2s, background 0.2s',
@@ -516,20 +521,22 @@ export function Navbar({ onCartClick, onMenuClick, cartCount }: NavbarProps) {
             </span>
           </button>
 
-          {/* Hamburger */}
+          {/* Hamburger — morphs to an X when the menu is open */}
           <button
             type="button"
             onClick={onMenuClick}
-            aria-label="Open menu"
-            aria-expanded={false}
+            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isMenuOpen}
             style={{
               background: 'none',
               border: 'none',
               cursor: 'pointer',
               display: 'flex',
-              flexDirection: 'column',
-              gap: 4,
-              padding: 4,
+              alignItems: 'center',
+              justifyContent: 'center',
+              minWidth: 44,
+              minHeight: 44,
+              padding: 0,
               transition: 'opacity 0.2s',
             }}
             onMouseEnter={(e) => {
@@ -541,36 +548,50 @@ export function Navbar({ onCartClick, onMenuClick, cartCount }: NavbarProps) {
               ;(e.currentTarget as HTMLButtonElement).style.opacity = '1'
             }}
           >
+            {/* fixed-size icon box so the bars can converge into an X */}
             <span
               aria-hidden="true"
-              style={{
-                display: 'block',
-                height: 1,
-                width: 22,
-                background: 'rgba(220,230,255,0.75)',
-                transition: 'width 0.25s ease',
-              }}
-            />
-            <span
-              aria-hidden="true"
-              style={{
-                display: 'block',
-                height: 1,
-                width: menuHover ? 22 : 14,
-                background: 'rgba(220,230,255,0.75)',
-                transition: 'width 0.25s ease',
-              }}
-            />
-            <span
-              aria-hidden="true"
-              style={{
-                display: 'block',
-                height: 1,
-                width: 22,
-                background: 'rgba(220,230,255,0.75)',
-                transition: 'width 0.25s ease',
-              }}
-            />
+              style={{ position: 'relative', display: 'block', width: 22, height: 14 }}
+            >
+              <span
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  height: 1,
+                  width: 22,
+                  background: 'rgba(220,230,255,0.75)',
+                  transformOrigin: 'center',
+                  transform: isMenuOpen ? 'translateY(6.5px) rotate(45deg)' : 'none',
+                  transition: 'transform 0.3s cubic-bezier(.4,0,.2,1), width 0.25s ease',
+                }}
+              />
+              <span
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  top: 6.5,
+                  height: 1,
+                  width: isMenuOpen ? 22 : menuHover ? 22 : 14,
+                  background: 'rgba(220,230,255,0.75)',
+                  opacity: isMenuOpen ? 0 : 1,
+                  transition: 'opacity 0.2s ease, width 0.25s ease',
+                }}
+              />
+              <span
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  top: 13,
+                  height: 1,
+                  width: 22,
+                  background: 'rgba(220,230,255,0.75)',
+                  transformOrigin: 'center',
+                  transform: isMenuOpen ? 'translateY(-6.5px) rotate(-45deg)' : 'none',
+                  transition: 'transform 0.3s cubic-bezier(.4,0,.2,1), width 0.25s ease',
+                }}
+              />
+            </span>
           </button>
         </div>
       </div>
