@@ -1,0 +1,63 @@
+/**
+ * Global keyframes — single source of truth for shared, static animations.
+ *
+ * Tailwind-driven animations (animate-*) live in tailwind.config.ts.
+ * Hero's cinematic crossfade keyframes are intentionally component-scoped
+ * because their percentages are computed at runtime from timing constants.
+ */
+
+/* ── Navbar (was injected into document.head — now declarative) ── */
+@keyframes pulseGlow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 6px rgba(37, 99, 235, 0.35));
+  }
+  50% {
+    filter: drop-shadow(0 0 14px rgba(59, 130, 246, 0.75));
+  }
+}
+
+@keyframes shimmerLine {
+  0% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes tickFlash {
+  0% {
+    color: #ffffff;
+  }
+  100% {
+    color: #e8efff;
+  }
+}
+
+/* ── Toast (was inline <style>) ── */
+@keyframes slideUp {
+  from {
+    transform: translate(-50%, 100px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+/* ── Modal entrance (shared; was duplicated inline in CheckoutModal) ── */
+@keyframes scale-in {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

@@ -2,36 +2,235 @@
 
 import { useEffect, useState } from 'react'
 
+// Keyframes (pulseGlow, shimmerLine, tickFlash) live in animations/keyframes.css.
+
 interface NavbarProps {
+  onCartClick: () => void
   onMenuClick: () => void
   cartCount: number
 }
 
-export function Navbar({ onMenuClick, cartCount }: NavbarProps) {
+/* ── Lion Sigil ── */
+function LionSigil() {
+  return (
+    <svg
+      width="36"
+      height="36"
+      viewBox="0 0 40 40"
+      fill="none"
+      aria-hidden="true"
+      style={{ animation: 'pulseGlow 4s ease-in-out infinite', display: 'block' }}
+    >
+      {/* rings */}
+      <circle cx="20" cy="20" r="18" stroke="rgba(37,99,235,0.18)" strokeWidth="0.6" />
+      <circle
+        cx="20"
+        cy="20"
+        r="15"
+        stroke="rgba(37,99,235,0.12)"
+        strokeWidth="0.5"
+        strokeDasharray="2 3"
+      />
+
+      {/* mane outline */}
+      <path
+        d="M20 5 Q29 5 34 13 Q38 20 34 27 Q29 35 20 35 Q11 35 6 27 Q2 20 6 13 Q11 5 20 5"
+        fill="none"
+        stroke="rgba(37,99,235,0.5)"
+        strokeWidth="0.8"
+      />
+
+      {/* mane spikes */}
+      <line
+        x1="14"
+        y1="7.5"
+        x2="12.5"
+        y2="3.5"
+        stroke="rgba(37,99,235,0.6)"
+        strokeWidth="0.7"
+        strokeLinecap="round"
+      />
+      <line
+        x1="20"
+        y1="6"
+        x2="20"
+        y2="1.5"
+        stroke="rgba(59,130,246,0.75)"
+        strokeWidth="0.9"
+        strokeLinecap="round"
+      />
+      <line
+        x1="26"
+        y1="7.5"
+        x2="27.5"
+        y2="3.5"
+        stroke="rgba(37,99,235,0.6)"
+        strokeWidth="0.7"
+        strokeLinecap="round"
+      />
+      <line
+        x1="10.5"
+        y1="12"
+        x2="7.5"
+        y2="9"
+        stroke="rgba(37,99,235,0.4)"
+        strokeWidth="0.6"
+        strokeLinecap="round"
+      />
+      <line
+        x1="29.5"
+        y1="12"
+        x2="32.5"
+        y2="9"
+        stroke="rgba(37,99,235,0.4)"
+        strokeWidth="0.6"
+        strokeLinecap="round"
+      />
+
+      {/* face */}
+      <ellipse
+        cx="20"
+        cy="21"
+        rx="7.5"
+        ry="8"
+        fill="none"
+        stroke="rgba(59,130,246,0.32)"
+        strokeWidth="0.6"
+      />
+
+      {/* eyes */}
+      <circle
+        cx="17"
+        cy="19.5"
+        r="1.4"
+        fill="none"
+        stroke="rgba(59,130,246,0.7)"
+        strokeWidth="0.7"
+      />
+      <circle
+        cx="23"
+        cy="19.5"
+        r="1.4"
+        fill="none"
+        stroke="rgba(59,130,246,0.7)"
+        strokeWidth="0.7"
+      />
+      <circle cx="17" cy="19.5" r="0.45" fill="rgba(59,130,246,0.6)" />
+      <circle cx="23" cy="19.5" r="0.45" fill="rgba(59,130,246,0.6)" />
+
+      {/* nose */}
+      <path
+        d="M19 22.5 L20 23.5 L21 22.5"
+        fill="none"
+        stroke="rgba(59,130,246,0.5)"
+        strokeWidth="0.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+
+      {/* gold chin / beard */}
+      <path
+        d="M16.5 27.5 Q20 30 23.5 27.5"
+        fill="none"
+        stroke="rgba(201,168,76,0.65)"
+        strokeWidth="0.85"
+        strokeLinecap="round"
+      />
+      <path
+        d="M14 25 Q15.5 27 17 26"
+        fill="none"
+        stroke="rgba(201,168,76,0.32)"
+        strokeWidth="0.6"
+        strokeLinecap="round"
+      />
+      <path
+        d="M26 25 Q24.5 27 23 26"
+        fill="none"
+        stroke="rgba(201,168,76,0.32)"
+        strokeWidth="0.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+/* ── Countdown digit unit ── */
+function CdUnit({ value, label, flash }: { value: string; label: string; flash: boolean }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'baseline', gap: 2, marginRight: 8 }}>
+      <span
+        style={{
+          fontFamily: 'var(--font-bebas), sans-serif',
+          fontSize: 17,
+          letterSpacing: '0.04em',
+          lineHeight: 1,
+          minWidth: 20,
+          textAlign: 'center',
+          color: flash ? '#ffffff' : '#e8efff',
+          transition: 'color 0.15s',
+        }}
+      >
+        {value}
+      </span>
+      <span
+        style={{
+          fontFamily: 'var(--font-barlow), sans-serif',
+          fontWeight: 300,
+          fontSize: 8,
+          letterSpacing: '0.18em',
+          color: 'rgba(59,130,246,0.65)',
+          lineHeight: 1,
+        }}
+      >
+        {label}
+      </span>
+    </div>
+  )
+}
+
+/* ── Cart icon ── */
+function CartIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M3 3h2l.9 2.7" stroke="#3b82f6" strokeWidth="1.4" strokeLinecap="round" />
+      <path
+        d="M5.9 5.7h13.6L18 14.7H8.4L5.9 5.7Z"
+        stroke="#3b82f6"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="9" cy="19" r="1" fill="#3b82f6" />
+      <circle cx="17" cy="19" r="1" fill="#3b82f6" />
+    </svg>
+  )
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MAIN NAVBAR
+══════════════════════════════════════════════════════════════ */
+export function Navbar({ onCartClick, onMenuClick, cartCount }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false)
-  const [countdown, setCountdown] = useState({
-    days: 4,
-    hours: 11,
-    minutes: 30,
-    seconds: 0,
-  })
+  const [menuHover, setMenuHover] = useState(false)
+  const [flashSecs, setFlashSecs] = useState(false)
+  const [countdown, setCountdown] = useState({ days: 4, hours: 11, minutes: 30, seconds: 0 })
 
+  /* scroll detection */
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      setScrolled(currentScrollY > 60)
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+    const onScroll = () => setScrolled(window.scrollY > 60)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  /* countdown */
   useEffect(() => {
     const interval = setInterval(() => {
+      setFlashSecs(true)
+      setTimeout(() => setFlashSecs(false), 160)
+
       setCountdown((prev) => {
         let { days, hours, minutes, seconds } = prev
         seconds--
-
         if (seconds < 0) {
           seconds = 59
           minutes--
@@ -44,149 +243,355 @@ export function Navbar({ onMenuClick, cartCount }: NavbarProps) {
           hours = 23
           days--
         }
-        if (days < 0) {
-          return { days: 0, hours: 0, minutes: 0, seconds: 0 }
-        }
-
+        if (days < 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 }
         return { days, hours, minutes, seconds }
       })
     }, 1000)
-
     return () => clearInterval(interval)
   }, [])
 
   const pad = (n: number) => String(n).padStart(2, '0')
 
+  /* ── styles ── */
+  const navStyle: React.CSSProperties = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 50,
+    height: 64,
+    display: 'flex',
+    alignItems: 'stretch',
+    transition: 'background 0.35s ease, border-color 0.35s ease, backdrop-filter 0.35s ease',
+    borderBottom: scrolled ? '0.5px solid rgba(37,99,235,0.18)' : '0.5px solid transparent',
+    background: scrolled ? 'rgba(4,8,16,0.88)' : 'transparent',
+    backdropFilter: scrolled ? 'blur(20px)' : 'none',
+    WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'none',
+  }
+
+  /* shimmer top line — always present, more visible when scrolled */
+  const shimmerStyle: React.CSSProperties = {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 1,
+    background:
+      'linear-gradient(90deg, transparent 0%, rgba(59,130,246,0.5) 35%, rgba(201,168,76,0.45) 58%, transparent 100%)',
+    animation: 'shimmerLine 6s ease-in-out infinite',
+    opacity: scrolled ? 1 : 0,
+    transition: 'opacity 0.4s ease',
+    pointerEvents: 'none',
+  }
+
+  const innerStyle: React.CSSProperties = {
+    width: '100%',
+    maxWidth: 1200,
+    margin: '0 auto',
+    padding: '0 28px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    position: 'relative',
+    height: '100%',
+  }
+
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 h-14 transition-all duration-300 ${
-        scrolled
-          ? 'bg-black/92 backdrop-blur-2xl border-b border-border-default'
-          : 'bg-transparent'
-      }`}
-    >
-      <div className="h-full px-6 flex items-center justify-between max-w-6xl mx-auto w-full">
-        {/* Logo - Left */}
-        <div className="flex items-center gap-3 h-full group">
-          {/* Lion SVG Logo */}
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 40 40"
-            className="mb-0.5 group-hover:drop-shadow-lg transition-all duration-300"
-            style={{
-              animation: 'pulseGlow 4s ease-in-out infinite',
-              filter: 'drop-shadow(0 0 8px rgba(37,99,235,0.4))',
-            }}
-          >
-            <defs>
-              <style>{`
-                @keyframes pulseGlow {
-                  0%, 100% { filter: drop-shadow(0 0 8px rgba(37,99,235,0.4)); }
-                  50% { filter: drop-shadow(0 0 16px rgba(59,130,246,0.85)); }
-                }
-              `}</style>
-            </defs>
-            {/* Outer ring */}
-            <circle cx="20" cy="20" r="19" fill="none" stroke="#2563eb" strokeWidth="0.7" opacity="0.2" />
+    <nav style={navStyle} aria-label="Main navigation">
+      {/* shimmer top accent */}
+      <div style={shimmerStyle} aria-hidden="true" />
 
-            {/* Lion head and body outline */}
-            <path
-              d="M 20 8 Q 28 8 32 14 Q 35 20 32 26 Q 28 32 20 33 Q 12 32 8 26 Q 5 20 8 14 Q 12 8 20 8"
-              fill="none"
-              stroke="#2563eb"
-              strokeWidth="1.2"
-              opacity="0.7"
-            />
-
-            {/* Mane spikes */}
-            <line x1="15" y1="10" x2="14" y2="6" stroke="#2563eb" strokeWidth="0.7" opacity="0.7" />
-            <line x1="20" y1="9" x2="20" y2="4" stroke="#2563eb" strokeWidth="0.8" opacity="0.8" />
-            <line x1="25" y1="10" x2="26" y2="6" stroke="#2563eb" strokeWidth="0.7" opacity="0.7" />
-
-            {/* Face/eye area */}
-            <circle cx="17" cy="19" r="1.5" fill="none" stroke="#2563eb" strokeWidth="0.7" opacity="0.6" />
-            <circle cx="23" cy="19" r="1.5" fill="none" stroke="#2563eb" strokeWidth="0.7" opacity="0.6" />
-
-            {/* Chin/beard gold accent */}
-            <path
-              d="M 18 28 Q 20 30 22 28"
-              fill="none"
-              stroke="#c9a84c"
-              strokeWidth="0.8"
-              opacity="0.7"
-            />
-          </svg>
-
-          <div className="flex flex-col leading-none">
-            <span className="font-bebas text-sm tracking-wide" style={{ letterSpacing: '0.12em' }}>
-              DIPBLU
+      <div style={innerStyle}>
+        {/* ── LOGO ── */}
+        <a
+          href="/"
+          aria-label="Boanerges home"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            textDecoration: 'none',
+            flexShrink: 0,
+          }}
+        >
+          <LionSigil />
+          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1, gap: 3 }}>
+            <span
+              style={{
+                fontFamily: 'var(--font-bebas), sans-serif',
+                fontSize: 20,
+                letterSpacing: '0.18em',
+                color: '#f0f4ff',
+                lineHeight: 1,
+              }}
+            >
+              BOANERGES
             </span>
-            <span className="font-dancing text-xs text-blue-bright hidden sm:block" style={{ fontSize: '10px' }}>
+            <span
+              style={{
+                fontFamily: 'var(--font-cormorant), serif',
+                fontStyle: 'italic',
+                fontWeight: 300,
+                fontSize: 10,
+                letterSpacing: '0.22em',
+                color: 'rgba(201,168,76,0.8)',
+                lineHeight: 1,
+              }}
+            >
               A Royal Priesthood
             </span>
           </div>
+        </a>
+
+        {/* ── CENTRE NAV (md+) ── */}
+        <div
+          style={{
+            position: 'absolute',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 36,
+          }}
+          className="hidden md:flex"
+        >
+          {(
+            [
+              { label: 'WORKS', href: '#works' },
+              { label: 'DROP', href: '#drop' },
+              { label: 'CONTACT', href: '#contact' },
+            ] as const
+          ).map(({ label, href }) => (
+            <a
+              key={label}
+              href={href}
+              style={{
+                fontFamily: 'var(--font-barlow), sans-serif',
+                fontWeight: 400,
+                fontSize: 10,
+                letterSpacing: '0.3em',
+                color: 'rgba(180,195,230,0.55)',
+                textDecoration: 'none',
+                position: 'relative',
+                paddingBottom: 2,
+                transition: 'color 0.25s',
+              }}
+              onMouseEnter={(e) => {
+                ;(e.currentTarget as HTMLAnchorElement).style.color = '#94b8f8'
+                const bar = e.currentTarget.querySelector('span') as HTMLSpanElement
+                if (bar) bar.style.width = '100%'
+              }}
+              onMouseLeave={(e) => {
+                ;(e.currentTarget as HTMLAnchorElement).style.color = 'rgba(180,195,230,0.55)'
+                const bar = e.currentTarget.querySelector('span') as HTMLSpanElement
+                if (bar) bar.style.width = '0%'
+              }}
+            >
+              {label}
+              {/* sliding underline */}
+              <span
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  width: '0%',
+                  height: 1,
+                  background: 'rgba(59,130,246,0.75)',
+                  transition: 'width 0.3s cubic-bezier(.4,0,.2,1)',
+                  display: 'block',
+                }}
+              />
+            </a>
+          ))}
         </div>
 
-        {/* Countdown - Center (hidden on mobile) */}
-        <div className="hidden sm:flex flex-col items-center gap-0 text-sm">
-          <span className="text-muted-2" style={{ fontSize: '9px', letterSpacing: '0.2em' }}>
-            DROP ENDS IN
-          </span>
-          <div className="flex items-baseline gap-2" style={{ fontSize: '16px' }}>
-            <span className="font-bebas tracking-wider">{pad(countdown.days)}</span>
-            <span className="font-barlow text-xs text-blue-bright" style={{ letterSpacing: '0.06em' }}>
-              D
+        {/* ── RIGHT CLUSTER ── */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
+          {/* Countdown (sm+) */}
+          <div
+            className="hidden sm:flex"
+            style={{ flexDirection: 'column', alignItems: 'center', gap: 3 }}
+            role="timer"
+            aria-label="Drop countdown"
+          >
+            <span
+              style={{
+                fontFamily: 'var(--font-barlow), sans-serif',
+                fontSize: 8,
+                letterSpacing: '0.28em',
+                color: 'rgba(148,184,248,0.4)',
+                fontWeight: 400,
+              }}
+            >
+              DROP ENDS IN
             </span>
-            <span className="font-bebas tracking-wider">{pad(countdown.hours)}</span>
-            <span className="font-barlow text-xs text-blue-bright" style={{ letterSpacing: '0.06em' }}>
-              H
-            </span>
-            <span className="font-bebas tracking-wider">{pad(countdown.minutes)}</span>
-            <span className="font-barlow text-xs text-blue-bright" style={{ letterSpacing: '0.06em' }}>
-              M
-            </span>
-            <span className="font-bebas tracking-wider">{pad(countdown.seconds)}</span>
-            <span className="font-barlow text-xs text-blue-bright" style={{ letterSpacing: '0.06em' }}>
-              S
-            </span>
+            <div style={{ display: 'flex', alignItems: 'baseline' }}>
+              <CdUnit value={pad(countdown.days)} label="D" flash={false} />
+              <Dot />
+              <CdUnit value={pad(countdown.hours)} label="H" flash={false} />
+              <Dot />
+              <CdUnit value={pad(countdown.minutes)} label="M" flash={false} />
+              <Dot />
+              <CdUnit value={pad(countdown.seconds)} label="S" flash={flashSecs} />
+            </div>
           </div>
-        </div>
 
-        {/* Right side - Region selector & Bag & Menu */}
-        <div className="flex items-center gap-3 sm:gap-6">
-          {/* Region selector (hidden on mobile) */}
+          {/* Divider */}
+          <div
+            className="hidden sm:block"
+            style={{ width: 1, height: 18, background: 'rgba(59,130,246,0.13)' }}
+            aria-hidden="true"
+          />
+
+          {/* Region (sm+) */}
           <button
-            className="hidden sm:block text-muted text-xs hover:text-blue-bright transition-colors"
-            style={{ letterSpacing: '0.2em' }}
+            type="button"
+            className="hidden sm:block"
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontFamily: 'var(--font-barlow), sans-serif',
+              fontSize: 9,
+              letterSpacing: '0.22em',
+              color: 'rgba(148,184,248,0.38)',
+              padding: 0,
+              transition: 'color 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              ;(e.currentTarget as HTMLButtonElement).style.color = 'rgba(148,184,248,0.8)'
+            }}
+            onMouseLeave={(e) => {
+              ;(e.currentTarget as HTMLButtonElement).style.color = 'rgba(148,184,248,0.38)'
+            }}
+            aria-label="Change region"
           >
             NIGERIA · NGN ▾
           </button>
 
-          {/* Bag button */}
+          {/* Cart */}
           <button
-            onClick={onMenuClick}
-            className="flex items-center gap-2 border border-border-default hover:border-blue-bright transition-colors px-2 py-1 rounded-sm"
-            style={{ fontSize: '10px', letterSpacing: '0.18em' }}
+            onClick={onCartClick}
+            type="button"
+            aria-label={`Open cart, ${cartCount} item${cartCount !== 1 ? 's' : ''}`}
+            style={{
+              background: 'none',
+              border: '0.5px solid rgba(59,130,246,0.22)',
+              cursor: 'pointer',
+              padding: '6px 10px 6px 8px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 7,
+              borderRadius: 2,
+              transition: 'border-color 0.2s, background 0.2s',
+              position: 'relative',
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget as HTMLButtonElement
+              el.style.borderColor = 'rgba(59,130,246,0.6)'
+              el.style.background = 'rgba(37,99,235,0.08)'
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget as HTMLButtonElement
+              el.style.borderColor = 'rgba(59,130,246,0.22)'
+              el.style.background = 'none'
+            }}
           >
-            <span>BAG</span>
-            <span className="font-bebas text-blue-bright" style={{ fontSize: '11px' }}>
-              [{cartCount}]
+            <CartIcon />
+            <span
+              aria-hidden="true"
+              style={{
+                fontFamily: 'var(--font-bebas), sans-serif',
+                fontSize: 12,
+                color: '#3b82f6',
+                letterSpacing: '0.08em',
+                lineHeight: 1,
+                minWidth: 10,
+                textAlign: 'center',
+              }}
+            >
+              {cartCount}
             </span>
           </button>
 
-          {/* Hamburger menu */}
+          {/* Hamburger */}
           <button
+            type="button"
             onClick={onMenuClick}
-            className="flex flex-col gap-1 hover:opacity-60 transition-opacity"
-            style={{ width: '22px', height: '14px' }}
+            aria-label="Open menu"
+            aria-expanded={false}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 4,
+              padding: 4,
+              transition: 'opacity 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              setMenuHover(true)
+              ;(e.currentTarget as HTMLButtonElement).style.opacity = '0.65'
+            }}
+            onMouseLeave={(e) => {
+              setMenuHover(false)
+              ;(e.currentTarget as HTMLButtonElement).style.opacity = '1'
+            }}
           >
-            <div className="h-px bg-white w-full" />
-            <div className="h-px bg-white w-3/5 transition-all" />
-            <div className="h-px bg-white w-full" />
+            <span
+              aria-hidden="true"
+              style={{
+                display: 'block',
+                height: 1,
+                width: 22,
+                background: 'rgba(220,230,255,0.75)',
+                transition: 'width 0.25s ease',
+              }}
+            />
+            <span
+              aria-hidden="true"
+              style={{
+                display: 'block',
+                height: 1,
+                width: menuHover ? 22 : 14,
+                background: 'rgba(220,230,255,0.75)',
+                transition: 'width 0.25s ease',
+              }}
+            />
+            <span
+              aria-hidden="true"
+              style={{
+                display: 'block',
+                height: 1,
+                width: 22,
+                background: 'rgba(220,230,255,0.75)',
+                transition: 'width 0.25s ease',
+              }}
+            />
           </button>
         </div>
       </div>
     </nav>
+  )
+}
+
+/* tiny dot separator between countdown units */
+function Dot() {
+  return (
+    <span
+      aria-hidden="true"
+      style={{
+        fontFamily: 'var(--font-barlow), sans-serif',
+        fontSize: 10,
+        color: 'rgba(59,130,246,0.22)',
+        margin: '0 4px 0 -4px',
+        alignSelf: 'center',
+        lineHeight: 1,
+      }}
+    >
+      ·
+    </span>
   )
 }

@@ -1,20 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&display=swap');
+/* Fonts are self-hosted via next/font (see lib/fonts.ts); the --font-* CSS
+   variables are injected onto <html> there. */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --font-bebas: 'Bebas Neue', sans-serif;
-  --font-barlow: 'Barlow Condensed', sans-serif;
-  --font-garamond: 'EB Garamond', serif;
-  --font-dancing: 'Dancing Script', cursive;
-  --font-cinzel: 'Cinzel', serif;
-  
   color-scheme: dark;
   background-color: #000000;
   color: #ffffff;
@@ -27,9 +18,12 @@
 
 html {
   scroll-behavior: smooth;
+  /* offset anchor jumps so section tops clear the fixed 64px navbar */
+  scroll-padding-top: 80px;
 }
 
-html, body {
+html,
+body {
   min-height: 100%;
   overflow-x: hidden;
 }
@@ -46,7 +40,7 @@ body {
 
 /* Noise texture overlay */
 body::before {
-  content: '';
+  content: "";
   position: fixed;
   top: 0;
   left: 0;
@@ -61,8 +55,13 @@ body::before {
 }
 
 /* Custom cursor */
-a, button, [role="button"] {
-  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="%23c9a84c"/></svg>') 4 4, auto;
+a,
+button,
+[role="button"] {
+  cursor:
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="%23c9a84c"/></svg>')
+    4 4,
+    auto;
 }
 
 /* Note: custom cursor is applied only to interactive elements above to avoid
@@ -70,7 +69,8 @@ a, button, [role="button"] {
 */
 
 /* Base styles */
-input, textarea {
+input,
+textarea {
   font-family: var(--font-barlow);
   color: #ffffff;
   background-color: transparent;
@@ -80,13 +80,17 @@ input::placeholder {
   color: #555555;
 }
 
-input:focus, textarea:focus {
+input:focus,
+textarea:focus {
   outline: none;
 }
 
 /* Smooth transitions */
 a {
-  transition: color 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+  transition:
+    color 0.3s ease,
+    border-color 0.3s ease,
+    background-color 0.3s ease;
 }
 
 button {

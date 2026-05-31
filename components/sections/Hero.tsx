@@ -1,167 +1,350 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
 
-const SLIDES = [
-  {
-    gradient: 'radial-gradient(ellipse at 40% 30%, #1a0a00, #000)',
-    ringColor: '#2563eb',
-    accentColor: '#3b82f6',
-  },
-  {
-    gradient: 'radial-gradient(ellipse at 55% 35%, #001035, #000)',
-    ringColor: '#2563eb',
-    accentColor: '#3b82f6',
-  },
-  {
-    gradient: 'radial-gradient(ellipse at 62% 28%, #0a1a08, #000)',
-    ringColor: '#c9a84c',
-    accentColor: '#c9a84c',
-  },
+const IMG = 'https://raw.githubusercontent.com/Anon2026-hyped/Boanerges/main'
+
+const IMAGES = [
+  `${IMG}/Hero(1).jpg`,
+  `${IMG}/IMG_1089(1).jpg`,
+  `${IMG}/IMG_1093(1).jpg`,
+  `${IMG}/IMG_1094(1).jpg`,
+  `${IMG}/IMG_1095(1).jpg`,
+  `${IMG}/IMG_1097(1).jpg`,
+  `${IMG}/IMG_1098(1).jpg`,
+  `${IMG}/IMG_1099(1).jpg`,
+  `${IMG}/IMG_1100(1).jpg`,
+  `${IMG}/IMG_1101(1).jpg`,
 ]
 
+const SLIDE_DUR = 6
+const TOTAL = IMAGES.length * SLIDE_DUR
+
+const FADE_IN_END = ((0.4 / TOTAL) * 100).toFixed(3)
+const HOLD_END = (((SLIDE_DUR - 0.6) / TOTAL) * 100).toFixed(3)
+const FADE_OUT_END = ((SLIDE_DUR / TOTAL) * 100).toFixed(3)
+
 export function Hero() {
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [animated, setAnimated] = useState(false)
+  const [counter, setCounter] = useState(1)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % SLIDES.length)
-    }, 6000)
-    return () => clearInterval(interval)
+    intervalRef.current = setInterval(() => {
+      setCounter((c) => (c % IMAGES.length) + 1)
+    }, SLIDE_DUR * 1000)
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
   }, [])
-
-  useEffect(() => {
-    setAnimated(true)
-  }, [])
-
-  const slide = SLIDES[currentSlide]
 
   return (
-    <section
-      className="relative w-full min-h-fit py-20 sm:py-32 overflow-hidden bg-black"
-      style={{
-        background: slide.gradient,
-        transition: 'all 1.8s ease',
-      }}
-    >
-      {/* Overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none z-0"
-        style={{
-          background:
-            'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.35) 45%, rgba(0,0,0,0.1) 100%)',
-        }}
-      />
+    <>
+      {/* Parametric crossfade keyframes — percentages computed from timing
+          constants, so these stay component-scoped (not in keyframes.css). */}
+      <style>{`
+        @keyframes cf-slide {
+          0%                   { opacity: 0; }
+          ${FADE_IN_END}%      { opacity: 1; }
+          ${HOLD_END}%         { opacity: 1; }
+          ${FADE_OUT_END}%     { opacity: 0; }
+          100%                 { opacity: 0; }
+        }
 
-      {/* animations moved to Tailwind config - use animate-* classes below */}
+        @keyframes kb-zoom-out {
+          from { transform: scale(1.10); }
+          to   { transform: scale(1.00); }
+        }
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col justify-center items-center px-6 sm:px-12 text-center">
-        {/* Eyebrow */}
-        <div className="mb-8 flex items-center gap-4 justify-center opacity-0 animate-fade-in-up delay-100">
-          <div className="w-7 h-px bg-blue-bright" />
-          <span
-            className="font-barlow text-muted-2 text-xs"
-            style={{ letterSpacing: '0.38em' }}
+        @keyframes title-show {
+          0%                              { opacity: 0; transform: translateY(18px); }
+          3%                              { opacity: 1; transform: translateY(0);    }
+          ${(((SLIDE_DUR * 0.75) / TOTAL) * 100).toFixed(3)}%  { opacity: 1; }
+          ${(((SLIDE_DUR * 0.95) / TOTAL) * 100).toFixed(3)}%  { opacity: 0; transform: translateY(-8px); }
+          100%                            { opacity: 0; }
+        }
+
+        @keyframes box-open {
+          from { height: 100%; }
+          to   { height: 9vh;  }
+        }
+
+        @keyframes scroll-pulse {
+          0%, 100% { transform: scaleY(1);   opacity: 0.45; }
+          50%      { transform: scaleY(0.4); opacity: 0.15; }
+        }
+
+        @keyframes corner-in      { to { opacity: 0.4;  } }
+        @keyframes fade-in-delay  { to { opacity: 0.45; } }
+
+        /*
+          Anamorphic knob blur:
+          SVG feGaussianBlur with stdDeviationX >> stdDeviationY
+          creates the horizontal oval stretch of a real anamorphic lens.
+          The radial mask keeps the center of frame sharp.
+        */
+        .anamorphic-blur {
+          position: absolute;
+          inset: 0;
+          z-index: 4;
+          pointer-events: none;
+          filter: url(#anamorphic);
+          /* Radial mask: sharp center, blurred at left/right edges */
+          -webkit-mask-image: radial-gradient(
+            ellipse 55% 80% at 50% 50%,
+            transparent 0%,
+            transparent 35%,
+            rgba(0,0,0,0.2) 55%,
+            rgba(0,0,0,0.6) 70%,
+            rgba(0,0,0,1)   100%
+          );
+          mask-image: radial-gradient(
+            ellipse 55% 80% at 50% 50%,
+            transparent 0%,
+            transparent 35%,
+            rgba(0,0,0,0.2) 55%,
+            rgba(0,0,0,0.6) 70%,
+            rgba(0,0,0,1)   100%
+          );
+        }
+      `}</style>
+
+      {/* ── SVG filter definition (hidden, referenced by CSS) ── */}
+      <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
+        <defs>
+          <filter
+            id="anamorphic"
+            x="-20%"
+            y="-20%"
+            width="140%"
+            height="140%"
+            colorInterpolationFilters="sRGB"
           >
-            A BLIND DROP EVENT
-          </span>
-          <div className="w-7 h-px bg-blue-bright" />
-        </div>
+            {/*
+              stdDeviation="28 2":
+                X=28 → heavy horizontal smear (anamorphic bokeh stretch)
+                Y=2  → barely any vertical blur (lens stays "tall")
+              This mimics the oval out-of-focus discs you see on Cooke/Hawk anamorphic glass.
+            */}
+            <feGaussianBlur stdDeviation="28 2" />
+          </filter>
+        </defs>
+      </svg>
 
-        {/* Headline */}
-        <div className="mb-8 max-w-4xl">
-          {['A', 'ROYAL', 'PRIEST', 'HOOD'].map((word, i) => (
+      <section
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: '100svh',
+          overflow: 'hidden',
+          background: '#0a0a0f',
+        }}
+      >
+        {/* ── Slide stack ── */}
+        <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
+          {IMAGES.map((src, i) => (
             <div
-              key={word}
-              className="font-bebas text-white overflow-hidden animate-clip-up"
+              key={src}
               style={{
-                fontSize: 'clamp(72px, 14vw, 160px)',
-                lineHeight: '0.86',
-                letterSpacing: '0.02em',
-                animationDelay: `${0.3 + i * 0.15}s`,
+                position: 'absolute',
+                inset: 0,
+                opacity: 0,
+                animation: `cf-slide ${TOTAL}s ${i * SLIDE_DUR}s linear infinite`,
               }}
             >
-              {i === 3 ? (
-                <span
-                  style={{
-                    WebkitTextStroke: '1px rgba(255, 255, 255, 0.3)',
-                    color: 'transparent',
-                    display: 'block',
-                  }}
-                >
-                  {word}
-                </span>
-              ) : i === 1 ? (
-                <span 
-                  className="block text-[#3b82f6] animate-glow-pulse"
-                  style={{ textShadow: '0 0 20px rgba(59, 130, 246, 0.5)' }}
-                >
-                  {word}
-                </span>
-              ) : (
-                <span className="block">{word}</span>
-              )}
+              <Image
+                src={src}
+                alt={`Slide ${i + 1}`}
+                fill
+                sizes="100vw"
+                priority={i === 0}
+                style={{
+                  objectFit: 'cover',
+                  objectPosition: 'center',
+                  transformOrigin: 'center center',
+                  animation: `kb-zoom-out ${SLIDE_DUR}s ${i * SLIDE_DUR}s ease-out infinite`,
+                }}
+              />
             </div>
           ))}
         </div>
 
-        {/* Subtext */}
-        <p
-          className="font-garamond italic text-white/55 max-w-2xl mb-10 opacity-0 animate-fade-in-up"
-          style={{ fontSize: 'clamp(16px, 2vw, 18px)', lineHeight: '1.7', animationDelay: '0.4s' }}
-        >
-          Three works. One blind draw. The Lion, The Crown, and The Altar — available now.
-        </p>
+        {/* ── Dark gradient overlay ── */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 2,
+            background:
+              'linear-gradient(180deg, rgba(10,10,15,0.50) 0%, rgba(10,10,15,0.08) 35%, rgba(10,10,15,0.08) 65%, rgba(10,10,15,0.65) 100%)',
+          }}
+        />
 
-        {/* CTA Row */}
-        <div className="flex gap-6 mb-10 justify-center opacity-0 animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
-          <button
-            className="group border border-blue-bright text-blue-bright px-8 py-4 font-barlow transition-all duration-300 flex items-center gap-2 relative overflow-hidden"
-            style={{
-              fontSize: '11px',
-              letterSpacing: '0.22em',
-              background: 'linear-gradient(135deg, transparent 0%, rgba(59, 130, 246, 0.05) 50%, transparent 100%)',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 28px rgba(59, 130, 246, 0.5), inset 0 0 28px rgba(59, 130, 246, 0.15)';
-              e.currentTarget.style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 0px transparent';
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
-          >
-            ACQUIRE NOW →
-          </button>
-          <button
-            className="text-white/40 hover:text-white font-barlow transition-all duration-300 text-xs relative group"
-            style={{ letterSpacing: '0.22em' }}
-          >
-            VIEW THE WORKS
-            <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-blue-bright to-transparent group-hover:w-full transition-all duration-300" />
-          </button>
-        </div>
-      </div>
+        {/* ── Scan lines ── */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 3,
+            pointerEvents: 'none',
+            backgroundImage:
+              'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.025) 3px, rgba(0,0,0,0.025) 4px)',
+          }}
+        />
 
-      {/* Slide dots */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-3 z-20">
-        {SLIDES.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentSlide(i)}
-            className={`transition-all duration-300 cursor-pointer ${
-              i === currentSlide 
-                ? 'bg-blue-bright w-12 h-px shadow-lg' 
-                : 'bg-white/20 w-7 h-px hover:bg-white/40'
-            }`}
+        {/* ── Anamorphic lens blur (the knob effect) ── */}
+        <div className="anamorphic-blur" />
+
+        {/* ── Frame corners ── */}
+        {(['tl', 'tr', 'bl', 'br'] as const).map((pos) => (
+          <div
+            key={pos}
             style={{
-              boxShadow: i === currentSlide ? '0 0 12px rgba(59, 130, 246, 0.4)' : 'none',
+              position: 'absolute',
+              zIndex: 16,
+              width: 36,
+              height: 36,
+              opacity: 0,
+              animation: 'corner-in 1s 1.2s ease forwards',
+              ...(pos.includes('t') ? { top: '11vh' } : { bottom: '11vh' }),
+              ...(pos.includes('l') ? { left: '2.5vw' } : { right: '2.5vw' }),
+              borderTop: pos.includes('t') ? '1px solid #c9a96e' : undefined,
+              borderBottom: pos.includes('b') ? '1px solid #c9a96e' : undefined,
+              borderLeft: pos.includes('l') ? '1px solid #c9a96e' : undefined,
+              borderRight: pos.includes('r') ? '1px solid #c9a96e' : undefined,
             }}
           />
         ))}
-      </div>
-    </section>
+
+        {/* ── Title ── */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 15,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '0 2rem',
+            opacity: 0,
+            animation: `title-show ${TOTAL}s 0.5s ease forwards`,
+          }}
+        >
+          <p
+            style={{
+              fontFamily: 'var(--font-cinzel), serif',
+              fontSize: 'clamp(0.55rem, 1.2vw, 0.75rem)',
+              letterSpacing: '0.38em',
+              color: '#c9a96e',
+              textTransform: 'uppercase',
+              marginBottom: '1.6rem',
+              opacity: 0.85,
+            }}
+          >
+            The Art of
+          </p>
+
+          <h1
+            style={{
+              fontFamily: 'var(--font-cormorant), serif',
+              fontSize: 'clamp(3.2rem, 9vw, 8rem)',
+              fontWeight: 300,
+              fontStyle: 'italic',
+              color: '#f5efe6',
+              lineHeight: 0.92,
+              textAlign: 'center',
+              letterSpacing: '-0.01em',
+              textShadow: '0 4px 60px rgba(0,0,0,0.6)',
+            }}
+          >
+            Boanerges
+            <br />
+            <span style={{ fontStyle: 'normal', fontWeight: 600, color: '#e8d5a3' }}>
+              Collection
+            </span>
+          </h1>
+
+          <div
+            style={{
+              width: 1,
+              height: 52,
+              background: 'linear-gradient(to bottom, transparent, #c9a96e, transparent)',
+              margin: '2.2rem auto',
+              opacity: 0.6,
+            }}
+          />
+
+          <p
+            style={{
+              fontFamily: 'var(--font-cinzel), serif',
+              fontSize: 'clamp(0.6rem, 1.4vw, 0.85rem)',
+              letterSpacing: '0.3em',
+              color: 'rgba(245,239,230,0.55)',
+              textTransform: 'uppercase',
+              textAlign: 'center',
+            }}
+          >
+            Where Vision Becomes Form
+          </p>
+        </div>
+
+        {/* ── Slide counter ── */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '5vh',
+            right: '3vw',
+            zIndex: 16,
+            fontFamily: 'var(--font-cinzel), serif',
+            fontSize: '0.6rem',
+            letterSpacing: '0.2em',
+            color: 'rgba(201,169,110,0.5)',
+            opacity: 0,
+            animation: 'corner-in 1s 1.6s ease forwards',
+          }}
+        >
+          {String(counter).padStart(2, '0')} / {String(IMAGES.length).padStart(2, '0')}
+        </div>
+
+        {/* ── Scroll cue ── */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '5vh',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 15,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 8,
+            opacity: 0,
+            animation: 'fade-in-delay 1s 2.4s ease forwards',
+          }}
+        >
+          <div
+            style={{
+              width: 1,
+              height: 44,
+              background: '#c9a96e',
+              transformOrigin: 'top',
+              animation: 'scroll-pulse 2s ease-in-out infinite',
+            }}
+          />
+          <span
+            style={{
+              fontFamily: 'var(--font-cinzel), serif',
+              fontSize: '0.52rem',
+              letterSpacing: '0.28em',
+              color: '#c9a96e',
+              textTransform: 'uppercase',
+            }}
+          >
+            Scroll
+          </span>
+        </div>
+      </section>
+    </>
   )
 }

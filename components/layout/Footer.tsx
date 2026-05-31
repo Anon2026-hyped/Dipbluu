@@ -12,13 +12,16 @@ export function Footer() {
   }
 
   return (
-    <footer className="bg-near-black border-t border-border-default pt-20 pb-10 px-6 sm:px-12">
+    <footer
+      id="contact"
+      className="bg-near-black border-t border-border-default pt-20 pb-10 px-6 sm:px-12"
+    >
       {/* Ghost logo */}
       <div
         className="font-bebas text-blue-primary/4 mb-20 w-full text-left"
         style={{ fontSize: '60px', letterSpacing: '0.06em' }}
       >
-        DIPBLU
+        BOANERGES
       </div>
 
       {/* Grid */}
@@ -35,6 +38,7 @@ export function Footer() {
             {['Previous Drops', 'Sold Works', 'Exhibitions'].map((link) => (
               <a
                 key={link}
+                // biome-ignore lint/a11y/useValidAnchor: placeholder — wire to real archive URL
                 href="#"
                 className="font-garamond italic text-white/55 hover:text-blue-bright transition-colors block"
                 style={{ fontSize: '15px' }}
@@ -64,6 +68,7 @@ export function Footer() {
               Instagram →
             </a>
             <a
+              // biome-ignore lint/a11y/useValidAnchor: placeholder — wire to real social URL
               href="#"
               className="font-garamond italic text-white/55 hover:text-blue-bright transition-colors block"
               style={{ fontSize: '15px' }}
@@ -131,12 +136,13 @@ export function Footer() {
             letterSpacing: '0.16em',
           }}
         >
-          © Dipblu Limited · Lagos · All works the property of the artist.
+          © BOANERGES Limited · Lagos · All works the property of the artist.
         </p>
         <div className="flex gap-4">
           {['IG', 'EMAIL', 'WA'].map((social) => (
             <a
               key={social}
+              // biome-ignore lint/a11y/useValidAnchor: placeholder — wire to real social URL
               href="#"
               className="font-barlow text-muted hover:text-blue-bright transition-colors text-xs"
               style={{

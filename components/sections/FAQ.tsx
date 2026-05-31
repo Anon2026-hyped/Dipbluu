@@ -5,7 +5,7 @@ import { useState } from 'react'
 const FAQ_ITEMS = [
   {
     q: 'WHAT IS THIS DROP?',
-    a: 'A blind drop of three new works by Dipblu — visual artist and founder of A Royal Priesthood. Each piece is available as a limited edition of 111. You will not know which piece you receive until it arrives.',
+    a: 'A blind drop of three new works by BOANERGES — visual artist and founder of A Royal Priesthood. Each piece is available as a limited edition of 111. You will not know which piece you receive until it arrives.',
   },
   {
     q: 'HOW ARE PRINTS ASSIGNED?',
@@ -40,6 +40,7 @@ function AccordionItem({ q, a, isOpen, onToggle }: AccordionItemProps) {
   return (
     <div className="border-b border-border-default hover:bg-white/1.5 transition-colors">
       <button
+        type="button"
         onClick={onToggle}
         className="w-full flex items-center justify-between py-6 px-0 text-left group"
       >
@@ -88,7 +89,7 @@ export function FAQ() {
   }
 
   return (
-    <section className="py-20 px-6 sm:px-12">
+    <section id="questions" className="py-20 px-6 sm:px-12">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div
@@ -112,7 +113,7 @@ export function FAQ() {
         <div className="border-t border-border-default">
           {FAQ_ITEMS.map((item, index) => (
             <AccordionItem
-              key={index}
+              key={item.q}
               q={item.q}
               a={item.a}
               isOpen={openIndex === index}

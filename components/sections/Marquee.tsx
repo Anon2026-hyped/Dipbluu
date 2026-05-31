@@ -7,7 +7,7 @@ export function Marquee() {
     'THE ALTAR',
     '333 EDITIONS',
     'A BLIND DROP',
-    'DIPBLU',
+    'BOANERGES',
     '2025',
     'LAGOS',
     'NIGERIA',
@@ -18,9 +18,13 @@ export function Marquee() {
     <section className="border-t border-b border-border-default bg-panel py-3.5 overflow-hidden">
       <div className="flex items-center">
         {/* Animated scroll container */}
-        <div className="flex gap-4 animate-scroll-slow" style={{ animation: 'scroll-slow 22s linear infinite' }}>
+        <div
+          className="flex gap-4 animate-scroll-slow"
+          style={{ animation: 'scroll-slow 22s linear infinite' }}
+        >
           {/* First set */}
           {[...items, ...items].map((item, i) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: static decorative marquee — items are intentionally duplicated and never reordered
             <div key={`${item}-${i}`} className="flex items-center gap-4 whitespace-nowrap">
               <span
                 className="font-bebas text-muted"
@@ -40,8 +44,12 @@ export function Marquee() {
         </div>
 
         {/* Second set for seamless loop (duplicated for CSS animation) */}
-        <div className="flex gap-4 animate-scroll-slow" style={{ animation: 'scroll-slow 22s linear infinite' }}>
+        <div
+          className="flex gap-4 animate-scroll-slow"
+          style={{ animation: 'scroll-slow 22s linear infinite' }}
+        >
           {[...items, ...items].map((item, i) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: static decorative marquee — items are intentionally duplicated and never reordered
             <div key={`${item}-dup-${i}`} className="flex items-center gap-4 whitespace-nowrap">
               <span
                 className="font-bebas text-muted"

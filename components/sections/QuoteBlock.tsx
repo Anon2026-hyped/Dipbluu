@@ -21,8 +21,8 @@ export function QuoteBlock() {
             lineHeight: '1.7',
           }}
         >
-          Art is not decoration. It is documentation. These works are records of a spiritual
-          reality that outlasts their medium.
+          Art is not decoration. It is documentation. These works are records of a spiritual reality
+          that outlasts their medium.
         </p>
 
         {/* Attribution */}
@@ -33,7 +33,7 @@ export function QuoteBlock() {
             letterSpacing: '0.3em',
           }}
         >
-          DIPBLU · STUDIO DISPATCH, 2025
+          BOANERGES · STUDIO DISPATCH, 2025
         </p>
       </div>
     </section>

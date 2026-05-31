@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 interface ToastProps {
   message: string
@@ -41,19 +41,6 @@ export function Toast({ message, productName, isVisible, onClose }: ToastProps) 
         )}
         {message}
       </div>
-
-      <style>{`
-        @keyframes slideUp {
-          from {
-            transform: translate(-50%, 100px);
-            opacity: 0;
-          }
-          to {
-            transform: translate(-50%, 0);
-            opacity: 1;
-          }
-        }
-      `}</style>
     </div>
   )
 }

@@ -1,7 +1,8 @@
 'use client'
 
-import { useCartStore } from '@/store/cartStore'
 import { useState } from 'react'
+import { useCartStore } from '@/features/cart'
+import { formatNgn } from '@/lib/money'
 
 interface CartDrawerProps {
   isOpen: boolean
@@ -10,14 +11,16 @@ interface CartDrawerProps {
 }
 
 export function CartDrawer({ isOpen, onClose, onCheckout }: CartDrawerProps) {
-  const { items, removeItem, updateQuantity, getTotalNGN } = useCartStore()
+  const { items, removeItem, updateQuantity, subtotalNgnKobo } = useCartStore()
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'crypto'>('card')
 
   return (
     <>
       {/* Overlay */}
       {isOpen && (
-        <div
+        <button
+          type="button"
+          aria-label="Close cart"
           className="fixed inset-0 bg-black/50 z-40 transition-opacity duration-300"
           onClick={onClose}
         />
@@ -42,6 +45,7 @@ export function CartDrawer({ isOpen, onClose, onCheckout }: CartDrawerProps) {
             BAG
           </h2>
           <button
+            type="button"
             onClick={onClose}
             className="text-white/40 hover:text-white transition-colors text-xl"
           >
@@ -54,10 +58,7 @@ export function CartDrawer({ isOpen, onClose, onCheckout }: CartDrawerProps) {
           {items.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center">
               <div className="text-4xl text-white/20 mb-4">◻</div>
-              <p
-                className="font-barlow text-muted text-xs"
-                style={{ letterSpacing: '0.22em' }}
-              >
+              <p className="font-barlow text-muted text-xs" style={{ letterSpacing: '0.22em' }}>
                 YOUR BAG IS EMPTY
               </p>
             </div>
@@ -92,7 +93,7 @@ export function CartDrawer({ isOpen, onClose, onCheckout }: CartDrawerProps) {
                         className="font-bebas text-blue-bright"
                         style={{ fontSize: '20px', letterSpacing: '0.06em' }}
                       >
-                        {item.artwork.priceNGN}
+                        {formatNgn(item.artwork.priceNgnKobo)}
                       </p>
                     </div>
                   </div>
@@ -101,24 +102,23 @@ export function CartDrawer({ isOpen, onClose, onCheckout }: CartDrawerProps) {
                   <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() =>
-                          updateQuantity(item.artwork.id, item.quantity - 1)
-                        }
+                        type="button"
+                        onClick={() => updateQuantity(item.artwork.id, item.quantity - 1)}
                         className="w-6 h-6 border border-border-default hover:border-blue-bright flex items-center justify-center text-xs"
                       >
                         −
                       </button>
                       <span className="w-4 text-center font-barlow">{item.quantity}</span>
                       <button
-                        onClick={() =>
-                          updateQuantity(item.artwork.id, item.quantity + 1)
-                        }
+                        type="button"
+                        onClick={() => updateQuantity(item.artwork.id, item.quantity + 1)}
                         className="w-6 h-6 border border-border-default hover:border-blue-bright flex items-center justify-center text-xs"
                       >
                         +
                       </button>
                     </div>
                     <button
+                      type="button"
                       onClick={() => removeItem(item.artwork.id)}
                       className="text-muted hover:text-blue-bright transition-colors"
                       style={{ fontSize: '9px', letterSpacing: '0.16em' }}
@@ -150,7 +150,7 @@ export function CartDrawer({ isOpen, onClose, onCheckout }: CartDrawerProps) {
                   letterSpacing: '0.04em',
                 }}
               >
-                {getTotalNGN()}
+                {formatNgn(subtotalNgnKobo())}
               </span>
             </div>
 
@@ -158,6 +158,7 @@ export function CartDrawer({ isOpen, onClose, onCheckout }: CartDrawerProps) {
             <div className="flex gap-2 mb-4">
               {['card', 'crypto'].map((method) => (
                 <button
+                  type="button"
                   key={method}
                   onClick={() => setPaymentMethod(method as 'card' | 'crypto')}
                   className={`flex-1 py-2 px-3 border transition-all ${
@@ -177,6 +178,7 @@ export function CartDrawer({ isOpen, onClose, onCheckout }: CartDrawerProps) {
 
             {/* Checkout button */}
             <button
+              type="button"
               onClick={onCheckout}
               className="w-full bg-blue-primary hover:bg-blue-bright text-white py-3 font-barlow transition-all"
               style={{

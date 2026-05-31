@@ -37,7 +37,7 @@ export function HowItWorks() {
   ]
 
   return (
-    <section className="bg-panel border-t border-b border-border-default py-20">
+    <section id="about" className="bg-panel border-t border-b border-border-default py-20">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-20 px-6 sm:px-12 max-w-6xl mx-auto">
         {/* Left Column - Steps */}
         <div>
@@ -61,7 +61,7 @@ export function HowItWorks() {
 
           {/* Steps */}
           <div className="border-t border-border-default">
-            {STEPS.map((step, idx) => (
+            {STEPS.map((step) => (
               <div
                 key={step.number}
                 className="border-b border-border-default flex gap-6 px-0 py-6 hover:pl-2 transition-all cursor-default group"
@@ -120,7 +120,7 @@ export function HowItWorks() {
               className="font-barlow text-gold/50"
               style={{ fontSize: '10px', letterSpacing: '0.2em' }}
             >
-              — DIPBLU
+              — BOANERGES
             </p>
           </div>
 

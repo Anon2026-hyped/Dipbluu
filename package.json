@@ -1,5 +1,5 @@
 {
-  "name": "dipblu",
+  "name": "BOANERGES",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -7,22 +7,31 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write ."
   },
   "dependencies": {
-    "next": "14.2.5",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "zustand": "4.5.0"
+    "@supabase/ssr": "^0.10.3",
+    "@supabase/supabase-js": "^2.106.2",
+    "next": "16.2.6",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "resend": "^6.12.4",
+    "server-only": "^0.0.1",
+    "stripe": "^22.2.0",
+    "zod": "^4.4.3",
+    "zustand": "5.0.14"
   },
   "devDependencies": {
-    "@types/node": "20.11.0",
-    "@types/react": "18.3.3",
+    "@biomejs/biome": "2.4.16",
+    "@types/node": "24.10.0",
+    "@types/react": "19.2.15",
+    "@types/react-dom": "19.2.3",
     "autoprefixer": "10.4.19",
-    "eslint": "^8.57.1",
-    "eslint-config-next": "^14.2.35",
     "postcss": "8.4.36",
     "tailwindcss": "3.4.5",
-    "typescript": "5.5.4"
+    "typescript": "5.7.3"
   }
 }

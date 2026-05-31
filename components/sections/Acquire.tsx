@@ -1,12 +1,18 @@
 'use client'
 
 import { useState } from 'react'
-import { useCartStore } from '@/store/cartStore'
+import { useCartStore } from '@/features/cart'
 import type { Artwork } from '@/types'
 
 const PACKAGE_OPTIONS = [
   { tier: 'ONE PRINT', price: '₦33,333', usd: '≈ $22 USD', id: 'one' },
-  { tier: 'TWO PRINTS · MOST POPULAR', price: '₦66,666', usd: '≈ $44 USD', id: 'two', featured: true },
+  {
+    tier: 'TWO PRINTS · MOST POPULAR',
+    price: '₦66,666',
+    usd: '≈ $44 USD',
+    id: 'two',
+    featured: true,
+  },
   { tier: 'THREE PRINTS · FULL SET', price: '₦99,999', usd: '≈ $66 USD', id: 'three' },
 ]
 
@@ -19,18 +25,25 @@ export function Acquire() {
     setTimeout(() => setAddedId(null), 2000)
 
     // Example artwork for cart
+    const usdByOption = { one: 2200, two: 4400, three: 6600 } as const
+    const ngnByOption = { one: 3_333_300, two: 6_666_600, three: 9_999_900 } as const
+    const key =
+      (optionId as 'one' | 'two' | 'three') in usdByOption
+        ? (optionId as 'one' | 'two' | 'three')
+        : 'one'
     const artwork: Artwork = {
-      id: optionId as any,
+      id: optionId,
+      slug: optionId,
       title: `${optionId.toUpperCase()} PRINT PACKAGE`,
       edition: 'BLIND DROP',
-      price: optionId === 'one' ? 22 : optionId === 'two' ? 44 : 66,
-      priceNGN: optionId === 'one' ? '₦33,333' : optionId === 'two' ? '₦66,666' : '₦99,999',
+      priceUsdCents: usdByOption[key],
+      priceNgnKobo: ngnByOption[key],
     }
     addItem(artwork, 1)
   }
 
   return (
-    <section className="py-20 px-6 sm:px-12">
+    <section id="acquire" className="py-20 px-6 sm:px-12">
       <div
         className="text-center mb-12 font-barlow text-muted"
         style={{ fontSize: '10px', letterSpacing: '0.36em' }}
@@ -40,13 +53,11 @@ export function Acquire() {
 
       {/* Price Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-border-default max-w-4xl mx-auto mb-12">
-        {PACKAGE_OPTIONS.map((option, idx) => (
+        {PACKAGE_OPTIONS.map((option) => (
           <div
             key={option.id}
             className={`p-8 border-r last:border-r-0 ${
-              option.featured
-                ? 'border-t-2 border-t-blue-primary bg-blue-bright/6'
-                : ''
+              option.featured ? 'border-t-2 border-t-blue-primary bg-blue-bright/6' : ''
             }`}
             style={{
               transform: option.featured ? 'translateY(-16px)' : 'none',
@@ -60,9 +71,7 @@ export function Acquire() {
             </div>
 
             <div
-              className={`font-bebas mb-2 ${
-                option.featured ? 'text-blue-bright' : 'text-white'
-              }`}
+              className={`font-bebas mb-2 ${option.featured ? 'text-blue-bright' : 'text-white'}`}
               style={{
                 fontSize: 'clamp(28px, 4vw, 44px)',
                 letterSpacing: '0.04em',
@@ -82,6 +91,7 @@ export function Acquire() {
             </div>
 
             <button
+              type="button"
               onClick={() => handleAddToCart(option.id)}
               className={`w-full border px-4 py-3 font-barlow transition-all text-xs ${
                 addedId === option.id
@@ -126,16 +136,14 @@ export function Acquire() {
         </div>
 
         <div className="flex-1">
-          <div
-            className="font-barlow text-muted text-xs"
-            style={{ letterSpacing: '0.22em' }}
-          >
+          <div className="font-barlow text-muted text-xs" style={{ letterSpacing: '0.22em' }}>
             ACQUIRED · PRIVATE COLLECTION
           </div>
         </div>
 
         <div>
           <button
+            type="button"
             disabled
             className="border border-muted text-muted px-6 py-2 font-barlow text-xs opacity-40 cursor-not-allowed"
             style={{ letterSpacing: '0.28em' }}

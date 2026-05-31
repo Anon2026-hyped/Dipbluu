@@ -1,8 +1,10 @@
 'use client'
 
-import { useCartStore } from '@/store/cartStore'
-import type { Artwork } from '@/types'
+import Image from 'next/image'
 import { useState } from 'react'
+import { useCartStore } from '@/features/cart'
+import { formatNgn } from '@/lib/money'
+import type { Artwork } from '@/types'
 
 interface ArtworkCardProps {
   artwork: Artwork
@@ -20,8 +22,18 @@ export function ArtworkCard({ artwork }: ArtworkCardProps) {
 
   return (
     <article className="bg-panel border border-border-default overflow-hidden">
-      <div className="aspect-3/4 bg-gradient-to-b from-blue-dim/20 to-black flex items-center justify-center">
-        <span className="text-blue-bright text-4xl opacity-60">◻</span>
+      <div className="relative aspect-[3/4] bg-gradient-to-b from-blue-dim/20 to-black flex items-center justify-center overflow-hidden">
+        {artwork.imageUrl ? (
+          <Image
+            src={artwork.imageUrl}
+            alt={artwork.title}
+            fill
+            sizes="(max-width: 1024px) 50vw, 380px"
+            className="object-cover"
+          />
+        ) : (
+          <span className="text-blue-bright text-4xl opacity-60">◻</span>
+        )}
       </div>
 
       <div className="p-5">
@@ -34,10 +46,7 @@ export function ArtworkCard({ artwork }: ArtworkCardProps) {
         >
           {artwork.title}
         </h3>
-        <p
-          className="font-barlow text-muted text-xs mb-3"
-          style={{ letterSpacing: '0.28em' }}
-        >
+        <p className="font-barlow text-muted text-xs mb-3" style={{ letterSpacing: '0.28em' }}>
           {artwork.edition}
         </p>
         <div className="flex items-end justify-between">
@@ -48,9 +57,10 @@ export function ArtworkCard({ artwork }: ArtworkCardProps) {
               letterSpacing: '0.06em',
             }}
           >
-            {artwork.priceNGN}
+            {formatNgn(artwork.priceNgnKobo)}
           </p>
           <button
+            type="button"
             onClick={handleAdd}
             className={`font-barlow text-xs border-b transition-colors ${
               isAdded

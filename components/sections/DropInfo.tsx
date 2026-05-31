@@ -14,7 +14,7 @@ export function DropInfo() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
+        if (entry?.isIntersecting && !hasAnimated.current) {
           hasAnimated.current = true
           let frame = 0
           const frames = 90
@@ -23,17 +23,17 @@ export function DropInfo() {
             const progress = frame / frames
             setDisplayStats({
               claimed: Math.floor(62 * progress),
-              editions: Math.floor(333 * progress),
-              works: Math.floor(3 * progress),
+              editions: Math.floor(999 * progress),
+              works: Math.floor(9 * progress),
             })
             if (frame >= frames) {
               clearInterval(interval)
-              setDisplayStats({ claimed: 62, editions: 333, works: 3 })
+              setDisplayStats({ claimed: 62, editions: 999, works: 9 })
             }
           }, 16)
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.5 },
     )
 
     if (statsRef.current) observer.observe(statsRef.current)
@@ -42,6 +42,7 @@ export function DropInfo() {
 
   return (
     <section
+      id="drop"
       ref={statsRef}
       className="grid grid-cols-1 md:grid-cols-2 gap-20 px-6 sm:px-12 py-20 max-w-6xl mx-auto border-b border-border-default"
     >
@@ -121,7 +122,7 @@ export function DropInfo() {
             letterSpacing: '0.18em',
           }}
         >
-          3 WORKS · 333 TOTAL EDITIONS · ₦33,333 EACH
+          9 WORKS · 999 TOTAL EDITIONS · ₦33,333 EACH
         </div>
 
         <p
@@ -132,14 +133,15 @@ export function DropInfo() {
           }}
         >
           Last month, I unveiled three new works as part of my latest collection. The Lion, The
-          Crown, and The Altar — collectively forming the brotherhood, now sit at the centre of
-          this blind drop.
+          Crown, and The Altar — collectively forming the brotherhood, now sit at the centre of this
+          blind drop.
         </p>
 
         {/* Work chips */}
         <div className="flex flex-wrap gap-3">
           {['THE LION', 'THE CROWN', 'THE ALTAR'].map((work) => (
             <button
+              type="button"
               key={work}
               className="border border-gold/30 text-gold/75 hover:border-gold hover:bg-gold-dim px-3 py-2 transition-colors"
               style={{
