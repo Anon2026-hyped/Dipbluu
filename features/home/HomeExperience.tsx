@@ -30,8 +30,9 @@ export function HomeExperience({ artworks }: { artworks: Artwork[] }) {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
   const [toast, setToast] = useState({ visible: false, message: '', product: '' })
 
-  const cartItems = useCartStore((state) => state.items)
-  const cartCount = cartItems.length
+  const cartCount = useCartStore((state) =>
+    state.items.reduce((sum, item) => sum + item.quantity, 0),
+  )
 
   const handleMenuClick = () => {
     setIsMenuOpen(!isMenuOpen)

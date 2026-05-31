@@ -288,7 +288,7 @@ export function Navbar({ onCartClick, onMenuClick, cartCount }: NavbarProps) {
     width: '100%',
     maxWidth: 1200,
     margin: '0 auto',
-    padding: '0 28px',
+    padding: '0 clamp(16px, 4vw, 28px)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -328,6 +328,7 @@ export function Navbar({ onCartClick, onMenuClick, cartCount }: NavbarProps) {
               BOANERGES
             </span>
             <span
+              className="hidden sm:block"
               style={{
                 fontFamily: 'var(--font-cormorant), serif',
                 fontStyle: 'italic',

@@ -1,9 +1,3 @@
-'use client'
-
-import { useState } from 'react'
-import { useCartStore } from '@/features/cart'
-import type { Artwork } from '@/types'
-
 const PACKAGE_OPTIONS = [
   { tier: 'ONE PRINT', price: '₦33,333', usd: '≈ $22 USD', id: 'one' },
   {
@@ -17,139 +11,101 @@ const PACKAGE_OPTIONS = [
 ]
 
 export function Acquire() {
-  const [addedId, setAddedId] = useState<string | null>(null)
-  const addItem = useCartStore((state) => state.addItem)
-
-  const handleAddToCart = (optionId: string) => {
-    setAddedId(optionId)
-    setTimeout(() => setAddedId(null), 2000)
-
-    // Example artwork for cart
-    const usdByOption = { one: 2200, two: 4400, three: 6600 } as const
-    const ngnByOption = { one: 3_333_300, two: 6_666_600, three: 9_999_900 } as const
-    const key =
-      (optionId as 'one' | 'two' | 'three') in usdByOption
-        ? (optionId as 'one' | 'two' | 'three')
-        : 'one'
-    const artwork: Artwork = {
-      id: optionId,
-      slug: optionId,
-      title: `${optionId.toUpperCase()} PRINT PACKAGE`,
-      edition: 'BLIND DROP',
-      priceUsdCents: usdByOption[key],
-      priceNgnKobo: ngnByOption[key],
-    }
-    addItem(artwork, 1)
-  }
-
   return (
-    <section id="acquire" className="py-20 px-6 sm:px-12">
-      <div
-        className="text-center mb-12 font-barlow text-muted"
-        style={{ fontSize: '10px', letterSpacing: '0.36em' }}
-      >
-        ACQUIRE
+    <section id="acquire" className="px-6 py-20 sm:px-12 sm:py-28">
+      <div className="mb-12 text-center sm:mb-16">
+        <p
+          className="mb-4 font-barlow text-blue-bright"
+          style={{ fontSize: '10px', letterSpacing: '0.4em' }}
+        >
+          ACQUIRE
+        </p>
+        <h2
+          className="font-bebas text-white"
+          style={{ fontSize: 'clamp(40px, 7vw, 84px)', letterSpacing: '0.02em' }}
+        >
+          OWN A PIECE
+        </h2>
+        <p className="mx-auto mt-3 max-w-md font-garamond text-muted-2 italic">
+          Each print belongs to the blind drop. Pick your pieces from the collection.
+        </p>
       </div>
 
-      {/* Price Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-border-default max-w-4xl mx-auto mb-12">
+      {/* Price tiers */}
+      <div className="mx-auto mb-12 grid max-w-4xl grid-cols-1 border border-border-default md:grid-cols-3">
         {PACKAGE_OPTIONS.map((option) => (
           <div
             key={option.id}
-            className={`p-8 border-r last:border-r-0 ${
-              option.featured ? 'border-t-2 border-t-blue-primary bg-blue-bright/6' : ''
+            className={`flex flex-col border-border-default p-8 md:border-r md:last:border-r-0 ${
+              option.featured
+                ? 'bg-blue-bright/[0.06] md:-translate-y-4 md:border-t-2 md:border-t-blue-primary'
+                : ''
             }`}
-            style={{
-              transform: option.featured ? 'translateY(-16px)' : 'none',
-            }}
           >
             <div
-              className="font-barlow text-muted mb-4"
+              className="mb-4 font-barlow text-muted"
               style={{ fontSize: '9.5px', letterSpacing: '0.32em' }}
             >
               {option.tier}
             </div>
-
             <div
-              className={`font-bebas mb-2 ${option.featured ? 'text-blue-bright' : 'text-white'}`}
-              style={{
-                fontSize: 'clamp(28px, 4vw, 44px)',
-                letterSpacing: '0.04em',
-              }}
+              className={`mb-2 font-bebas ${option.featured ? 'text-blue-bright' : 'text-white'}`}
+              style={{ fontSize: 'clamp(28px, 4vw, 44px)', letterSpacing: '0.04em' }}
             >
               {option.price}
             </div>
-
             <div
-              className="font-barlow text-muted mb-6"
-              style={{
-                fontSize: '10.5px',
-                letterSpacing: '0.16em',
-              }}
+              className="mb-6 font-barlow text-muted"
+              style={{ fontSize: '10.5px', letterSpacing: '0.16em' }}
             >
               {option.usd}
             </div>
-
-            <button
-              type="button"
-              onClick={() => handleAddToCart(option.id)}
-              className={`w-full border px-4 py-3 font-barlow transition-all text-xs ${
-                addedId === option.id
-                  ? 'border-gold text-gold'
-                  : option.featured
-                    ? 'border-blue-bright text-blue-bright hover:bg-blue-primary hover:text-black hover:shadow-lg'
-                    : 'border-white/35 text-white hover:border-blue-bright hover:text-blue-bright'
+            <a
+              href="#works"
+              className={`mt-auto block border px-4 py-3 text-center font-barlow transition-all ${
+                option.featured
+                  ? 'border-blue-bright text-blue-bright hover:bg-blue-primary hover:text-black'
+                  : 'border-white/35 text-white hover:border-blue-bright hover:text-blue-bright'
               }`}
-              style={{
-                fontSize: '10.5px',
-                letterSpacing: '0.28em',
-              }}
+              style={{ fontSize: '10.5px', letterSpacing: '0.28em' }}
             >
-              {addedId === option.id ? '✓ ADDED' : 'ACQUIRE'}
-            </button>
+              SELECT A PIECE →
+            </a>
           </div>
         ))}
       </div>
 
-      {/* Original Triptych Row */}
+      {/* Original triptych */}
       <div
-        className="flex flex-col md:flex-row gap-6 border border-border-gold bg-gold-dim p-7 max-w-4xl mx-auto"
-        style={{ background: 'rgba(201, 168, 76, 0.15)' }}
+        className="mx-auto flex max-w-4xl flex-col gap-6 border border-border-gold p-7 md:flex-row md:items-center"
+        style={{ background: 'rgba(201, 168, 76, 0.12)' }}
       >
         <div className="flex-1">
           <div
-            className="font-barlow text-gold/70 mb-2"
+            className="mb-2 font-barlow text-gold/70"
             style={{ fontSize: '10px', letterSpacing: '0.28em' }}
           >
             THE ORIGINAL TRIPTYCH
           </div>
           <div
-            className="font-bebas text-gold mb-0 line-through"
-            style={{
-              fontSize: 'clamp(24px, 3vw, 32px)',
-              letterSpacing: '0.06em',
-              opacity: 0.4,
-            }}
+            className="font-bebas text-gold line-through"
+            style={{ fontSize: 'clamp(24px, 3vw, 32px)', letterSpacing: '0.06em', opacity: 0.4 }}
           >
             ₦10,207,600.00
           </div>
         </div>
-
         <div className="flex-1">
           <div className="font-barlow text-muted text-xs" style={{ letterSpacing: '0.22em' }}>
             ACQUIRED · PRIVATE COLLECTION
           </div>
         </div>
-
         <div>
-          <button
-            type="button"
-            disabled
-            className="border border-muted text-muted px-6 py-2 font-barlow text-xs opacity-40 cursor-not-allowed"
+          <span
+            className="inline-block border border-muted px-6 py-2 font-barlow text-muted text-xs opacity-40"
             style={{ letterSpacing: '0.28em' }}
           >
             SOLD
-          </button>
+          </span>
         </div>
       </div>
     </section>
