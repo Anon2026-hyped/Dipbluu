@@ -11,12 +11,14 @@ interface MenuOverlayProps {
 const HERO_IMAGE = 'https://raw.githubusercontent.com/Anon2026-hyped/Boanerges/main/Hero(1).jpg'
 
 const LINKS = [
-  { label: 'THE WORKS', href: '#works' },
-  { label: 'CURRENT DROP', href: '#drop' },
-  { label: 'ACQUIRE', href: '#acquire' },
-  { label: 'ABOUT', href: '#about' },
-  { label: 'QUESTIONS', href: '#questions' },
-  { label: 'CONTACT', href: '#contact' },
+  { label: 'HOME', href: '/' },
+  { label: 'GALLERY', href: '/gallery' },
+  { label: 'THE WORKS', href: '/#works' },
+  { label: 'CURRENT DROP', href: '/#drop' },
+  { label: 'ACQUIRE', href: '/#acquire' },
+  { label: 'ABOUT', href: '/#about' },
+  { label: 'QUESTIONS', href: '/#questions' },
+  { label: 'CONTACT', href: '/#contact' },
 ]
 
 const SOCIALS = [

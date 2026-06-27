@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useCartStore } from '@/features/cart'
-import { formatNgn } from '@/lib/money'
+import { formatUsd } from '@/lib/money'
 import type { Artwork } from '@/types'
 
 export function Gallery({ artworks }: { artworks: Artwork[] }) {
@@ -95,7 +95,7 @@ export function Gallery({ artworks }: { artworks: Artwork[] }) {
                   className="mt-3 font-bebas text-blue-bright"
                   style={{ fontSize: '22px', letterSpacing: '0.05em' }}
                 >
-                  {formatNgn(artwork.priceNgnKobo)}
+                  {formatUsd(artwork.priceUsdCents)}
                 </p>
               </div>
             </Link>

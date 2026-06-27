@@ -17,11 +17,11 @@ const FAQ_ITEMS = [
   },
   {
     q: 'WHAT PAYMENT METHODS ARE ACCEPTED?',
-    a: 'We accept card payments via Paystack (Naira and USD), as well as cryptocurrency payments including Bitcoin, Ethereum, and USDT. Select your preferred method at checkout.',
+    a: 'We accept card payments via Stripe (USD), as well as cryptocurrency payments including Bitcoin, Ethereum, and USDT. Select your preferred method at checkout.',
   },
   {
     q: 'HOW DO I COLLECT MY PIECE?',
-    a: 'Lagos-based collectors will be invited to a pickup event. International orders ship within 10 business days. All collectors receive email confirmation with tracking or pickup details.',
+    a: 'Local collectors will be invited to a pickup event. International orders ship within 10 business days. All collectors receive email confirmation with tracking or pickup details.',
   },
   {
     q: 'RETURNS?',

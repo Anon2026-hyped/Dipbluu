@@ -2,15 +2,13 @@
 
 export function Marquee() {
   const items = [
-    'THE LION',
-    'THE CROWN',
-    'THE ALTAR',
+    'NWUNYE ODOGWU',
+    'PANIC',
+    'AFRICAN COWBOY',
     '333 EDITIONS',
     'A BLIND DROP',
     'BOANERGES',
     '2025',
-    'LAGOS',
-    'NIGERIA',
     'A ROYAL PRIESTHOOD',
   ]
 

@@ -3,7 +3,7 @@ import 'server-only'
 import { randomUUID } from 'node:crypto'
 import { sendAdminNotification, sendOrderConfirmation } from '@/lib/email'
 import { publicEnv } from '@/lib/env'
-import { formatNgn, formatUsd } from '@/lib/money'
+import { formatUsd } from '@/lib/money'
 import type { InitResult, PaymentProviderId } from '@/lib/payments'
 import { currencyFor, getProvider, selectProvider } from '@/lib/payments'
 import type { CheckoutInput } from '@/lib/validation/checkout'
@@ -46,7 +46,7 @@ export async function startCheckout(
   const items = input.items.map((item) => {
     const artwork = byId.get(item.artworkId)
     if (!artwork) throw new Error(`Unknown artwork: ${item.artworkId}`)
-    const unit = currency === 'NGN' ? artwork.priceNgnKobo : artwork.priceUsdCents
+    const unit = artwork.priceUsdCents
     amountMinor += unit * item.quantity
     return {
       artworkId: artwork.id,
@@ -65,7 +65,7 @@ export async function startCheckout(
     subtotalMinor: amountMinor,
     shippingMinor: 0,
     totalMinor: amountMinor,
-    deliveryType: input.deliveryType,
+
     paymentProvider: provider.id,
     idempotencyKey,
     items,
@@ -125,7 +125,7 @@ export async function handleProviderWebhook(
       orderNumber: order.order_number,
       email: order.email,
       customerName: order.email.split('@')[0] ?? 'there',
-      total: order.currency === 'NGN' ? formatNgn(order.total_minor) : formatUsd(order.total_minor),
+      total: formatUsd(order.total_minor),
       items: await getOrderItemsSummary(order.id),
     }
     await sendOrderConfirmation(summary)

@@ -1,13 +1,13 @@
 export interface Artwork {
   id: string
-  /** URL-safe identifier for routing (e.g. /art/the-lion). */
+  /** URL-safe identifier for routing (e.g. /art/nwunye-odogwu). */
   slug: string
   title: string
+  /** Material medium, e.g. "Oil on Canvas" or "Acrylic on Canvas". */
+  medium?: string
   edition: string
-  /** Price in USD minor units (cents). e.g. 2200 = $22.00 */
+  /** Price in USD minor units (cents). e.g. 200000 = $2,000.00 */
   priceUsdCents: number
-  /** Price in NGN minor units (kobo). e.g. 3_333_300 = ₦33,333 */
-  priceNgnKobo: number
   description?: string
   /** Public URL of the primary image (Supabase Storage), when available. */
   imageUrl?: string
@@ -21,7 +21,7 @@ export interface CartItem {
   quantity: number
 }
 
-export type DeliveryType = 'lagos' | 'nigeria' | 'international'
+export type DeliveryType = 'standard' | 'international'
 export type PaymentMethod = 'card' | 'crypto'
 export type OrderStatus = 'pending' | 'completed' | 'failed'
 
@@ -30,8 +30,6 @@ export interface Order {
   items: CartItem[]
   /** Order total in USD minor units (cents). */
   totalUsdCents: number
-  /** Order total in NGN minor units (kobo). */
-  totalNgnKobo: number
   email: string
   firstName: string
   lastName: string

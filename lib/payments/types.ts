@@ -6,7 +6,7 @@ export interface PaymentContext {
   orderId: string
   orderNumber: string
   email: string
-  /** Charge amount in integer minor units (USD cents / NGN kobo). */
+  /** Charge amount in integer minor units (USD cents). */
   amountMinor: number
   currency: Currency
   description: string

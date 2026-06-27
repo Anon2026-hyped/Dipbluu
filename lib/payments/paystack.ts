@@ -23,7 +23,7 @@ export const paystackProvider: PaymentProvider = {
       },
       body: JSON.stringify({
         email: ctx.email,
-        amount: ctx.amountMinor, // kobo
+        amount: ctx.amountMinor,
         currency: ctx.currency,
         reference: ctx.orderNumber,
         callback_url: ctx.successUrl,

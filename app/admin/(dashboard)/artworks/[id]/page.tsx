@@ -14,11 +14,11 @@ export default async function EditArtworkPage({ params }: { params: Promise<{ id
   const initial = {
     title: artwork.title,
     slug: artwork.slug,
+    medium: artwork.medium ?? '',
     edition: artwork.edition,
     description: artwork.description ?? '',
     status: artwork.status,
     priceUsd: (option?.price_usd_cents ?? 0) / 100,
-    priceNgn: (option?.price_ngn_kobo ?? 0) / 100,
     stock: option?.stock ?? 0,
     editionSize: option?.edition_size ?? ('' as const),
   }

@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import { useState } from 'react'
 import { useCartStore } from '@/features/cart'
-import { formatNgn } from '@/lib/money'
+import { formatUsd } from '@/lib/money'
 import type { Artwork } from '@/types'
 
 interface ArtworkCardProps {
@@ -57,7 +57,7 @@ export function ArtworkCard({ artwork }: ArtworkCardProps) {
               letterSpacing: '0.06em',
             }}
           >
-            {formatNgn(artwork.priceNgnKobo)}
+            {formatUsd(artwork.priceUsdCents)}
           </p>
           <button
             type="button"

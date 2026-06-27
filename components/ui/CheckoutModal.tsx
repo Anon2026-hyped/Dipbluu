@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useCartStore } from '@/features/cart'
 import { useCheckout } from '@/features/checkout/useCheckout'
 import { track } from '@/lib/analytics'
-import { formatNgn, formatUsd } from '@/lib/money'
+import { formatUsd } from '@/lib/money'
 import type { CheckoutInput } from '@/lib/validation/checkout'
 
 interface CheckoutModalProps {
@@ -12,15 +12,15 @@ interface CheckoutModalProps {
   onClose: () => void
 }
 
-type DeliveryType = 'lagos' | 'nigeria' | 'international'
+type DeliveryType = 'standard' | 'international'
 type PaymentMethod = 'card' | 'crypto'
 
 export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
-  const { items, clearCart, subtotalNgnKobo, subtotalUsdCents } = useCartStore()
+  const { items, clearCart, subtotalUsdCents } = useCartStore()
   const { loading, error, crypto, orderNumber, start, reset } = useCheckout()
 
   const [step, setStep] = useState(1)
-  const [deliveryType, setDeliveryType] = useState<DeliveryType>('lagos')
+  const [deliveryType, setDeliveryType] = useState<DeliveryType>('standard')
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card')
   const [formData, setFormData] = useState({
     firstName: '',
@@ -31,7 +31,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   })
 
   const isInternational = deliveryType === 'international'
-  const total = isInternational ? formatUsd(subtotalUsdCents()) : formatNgn(subtotalNgnKobo())
+  const total = formatUsd(subtotalUsdCents())
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
@@ -43,14 +43,13 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const detailsValid =
     formData.firstName.trim() !== '' &&
     /.+@.+\..+/.test(formData.email) &&
-    (deliveryType === 'lagos' || formData.address.trim() !== '')
+    formData.address.trim() !== ''
 
   const handleStepAdvance = () => {
     if (detailsValid) setStep(2)
   }
 
   const handlePay = async () => {
-    // Crypto only applies to international orders; Nigeria always routes to Paystack.
     const method: PaymentMethod = isInternational ? paymentMethod : 'card'
     const input: CheckoutInput = {
       items: items.map((item) => ({ artworkId: item.artwork.id, quantity: item.quantity })),
@@ -59,7 +58,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       shipping: {
         fullName: `${formData.firstName} ${formData.lastName}`.trim(),
         email: formData.email,
-        address: formData.address.trim() || 'Lagos pickup',
+        address: formData.address.trim(),
         phone: formData.phone.trim() || undefined,
       },
     }
@@ -149,27 +148,22 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   onChange={(e) => setDeliveryType(e.target.value as DeliveryType)}
                   className={`${fieldClass} text-white`}
                 >
-                  <option value="lagos" className="bg-black">
-                    Lagos Pickup
-                  </option>
-                  <option value="nigeria" className="bg-black">
-                    Nigeria Delivery
+                  <option value="standard" className="bg-black">
+                    Standard Shipping
                   </option>
                   <option value="international" className="bg-black">
                     International Shipping
                   </option>
                 </select>
 
-                {deliveryType !== 'lagos' && (
-                  <textarea
-                    name="address"
-                    placeholder="Shipping Address (street, city, country)"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    rows={2}
-                    className={`${fieldClass} resize-none`}
-                  />
-                )}
+                <textarea
+                  name="address"
+                  placeholder="Shipping Address (street, city, country)"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  rows={2}
+                  className={`${fieldClass} resize-none`}
+                />
               </div>
 
               <button
@@ -230,9 +224,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       {item.quantity > 1 ? ` ×${item.quantity}` : ''}
                     </span>
                     <span className="text-blue-bright">
-                      {isInternational
-                        ? formatUsd(item.artwork.priceUsdCents * item.quantity)
-                        : formatNgn(item.artwork.priceNgnKobo * item.quantity)}
+                      {formatUsd(item.artwork.priceUsdCents * item.quantity)}
                     </span>
                   </div>
                 ))}

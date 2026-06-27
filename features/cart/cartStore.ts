@@ -9,8 +9,6 @@ interface CartState {
   clearCart: () => void
   /** Subtotal in USD minor units (cents). */
   subtotalUsdCents: () => number
-  /** Subtotal in NGN minor units (kobo). */
-  subtotalNgnKobo: () => number
 }
 
 export const useCartStore = create<CartState>((set, get) => ({
@@ -56,6 +54,4 @@ export const useCartStore = create<CartState>((set, get) => ({
   clearCart: () => set({ items: [] }),
   subtotalUsdCents: () =>
     get().items.reduce((sum, item) => sum + item.artwork.priceUsdCents * item.quantity, 0),
-  subtotalNgnKobo: () =>
-    get().items.reduce((sum, item) => sum + item.artwork.priceNgnKobo * item.quantity, 0),
 }))

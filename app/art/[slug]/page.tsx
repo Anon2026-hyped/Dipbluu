@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { SiteTopBar } from '@/components/layout/SiteTopBar'
 import { ArtworkViewer } from '@/features/catalog/ArtworkViewer'
 import { publicEnv } from '@/lib/env'
-import { formatNgn, formatUsd } from '@/lib/money'
+import { formatUsd } from '@/lib/money'
 import { getArtworkBySlug, getArtworks } from '@/server/repositories/artworks'
 
 export const revalidate = 300
@@ -57,38 +58,51 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
   }
 
   return (
-    <section className="mx-auto max-w-3xl px-6 py-24 text-center">
-      <script
-        type="application/ld+json"
-        // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data (static, server-generated)
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+    <div className="min-h-screen bg-black text-white">
+      <SiteTopBar crumb="GALLERY" />
 
-      <div className="mb-10">
-        <ArtworkViewer src={artwork.imageUrl} alt={artwork.title} />
-      </div>
+      <section className="mx-auto max-w-3xl px-6 py-24 text-center">
+        <script
+          type="application/ld+json"
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data (static, server-generated)
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
 
-      <p className="font-barlow text-muted" style={{ fontSize: '10px', letterSpacing: '0.36em' }}>
-        {artwork.edition}
-      </p>
-      <h1 className="mb-4 font-cinzel text-4xl text-white tracking-wide">{artwork.title}</h1>
+        <div className="mb-10">
+          <ArtworkViewer src={artwork.imageUrl} alt={artwork.title} />
+        </div>
 
-      <p className="mb-2 font-bebas text-3xl text-blue-bright">{formatNgn(artwork.priceNgnKobo)}</p>
-      <p className="mb-8 font-barlow text-muted text-sm">≈ {formatUsd(artwork.priceUsdCents)}</p>
-
-      {artwork.description && (
-        <p className="mx-auto mb-10 max-w-xl font-garamond text-white/70 italic leading-relaxed">
-          {artwork.description}
+        <p className="font-barlow text-muted" style={{ fontSize: '10px', letterSpacing: '0.36em' }}>
+          {artwork.edition}
         </p>
-      )}
+        <h1 className="mb-2 font-cinzel text-4xl text-white tracking-wide">{artwork.title}</h1>
+        {artwork.medium && (
+          <p
+            className="mb-4 font-barlow text-muted/70"
+            style={{ fontSize: '11px', letterSpacing: '0.28em' }}
+          >
+            {artwork.medium}
+          </p>
+        )}
 
-      <Link
-        href="/gallery"
-        className="inline-block border border-blue-bright px-8 py-4 font-barlow text-blue-bright transition-all hover:bg-blue-bright hover:text-black"
-        style={{ fontSize: '11px', letterSpacing: '0.22em' }}
-      >
-        VIEW THE COLLECTION
-      </Link>
-    </section>
+        <p className="mb-8 font-bebas text-3xl text-blue-bright">
+          {formatUsd(artwork.priceUsdCents)}
+        </p>
+
+        {artwork.description && (
+          <p className="mx-auto mb-10 max-w-xl font-garamond text-white/70 italic leading-relaxed">
+            {artwork.description}
+          </p>
+        )}
+
+        <Link
+          href="/gallery"
+          className="inline-block border border-blue-bright px-8 py-4 font-barlow text-blue-bright transition-all hover:bg-blue-bright hover:text-black"
+          style={{ fontSize: '11px', letterSpacing: '0.22em' }}
+        >
+          VIEW THE COLLECTION
+        </Link>
+      </section>
+    </div>
   )
 }

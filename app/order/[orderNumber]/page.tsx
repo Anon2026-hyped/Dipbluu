@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { OrderStatusPoller } from '@/components/order/OrderStatusPoller'
 import { isSupabaseConfigured } from '@/lib/env'
-import { formatNgn, formatUsd } from '@/lib/money'
+import { formatUsd } from '@/lib/money'
 import { getOrderByNumber } from '@/server/repositories/orders'
 import type { OrderStatus } from '@/types/database'
 
@@ -46,9 +46,7 @@ export default async function OrderPage({ params }: { params: Promise<{ orderNum
       <p className="mb-8 font-garamond text-white/65 italic">{copy.note}</p>
 
       {order && (
-        <p className="mb-8 font-bebas text-2xl text-white">
-          {order.currency === 'NGN' ? formatNgn(order.total_minor) : formatUsd(order.total_minor)}
-        </p>
+        <p className="mb-8 font-bebas text-2xl text-white">{formatUsd(order.total_minor)}</p>
       )}
 
       <Link

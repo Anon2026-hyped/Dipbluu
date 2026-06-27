@@ -1,13 +1,13 @@
 const PACKAGE_OPTIONS = [
-  { tier: 'ONE PRINT', price: '₦33,333', usd: '≈ $22 USD', id: 'one' },
+  { tier: 'ONE WORK', price: 'FROM $400', usd: 'OIL ON CANVAS', id: 'one' },
   {
-    tier: 'TWO PRINTS · MOST POPULAR',
-    price: '₦66,666',
-    usd: '≈ $44 USD',
+    tier: 'TWO WORKS · MOST POPULAR',
+    price: 'FROM $800',
+    usd: 'OIL ON CANVAS',
     id: 'two',
     featured: true,
   },
-  { tier: 'THREE PRINTS · FULL SET', price: '₦99,999', usd: '≈ $66 USD', id: 'three' },
+  { tier: 'THREE WORKS · FULL SET', price: 'FROM $1,200', usd: 'OIL ON CANVAS', id: 'three' },
 ]
 
 export function Acquire() {
@@ -91,7 +91,7 @@ export function Acquire() {
             className="font-bebas text-gold line-through"
             style={{ fontSize: 'clamp(24px, 3vw, 32px)', letterSpacing: '0.06em', opacity: 0.4 }}
           >
-            ₦10,207,600.00
+            $6,800.00
           </div>
         </div>
         <div className="flex-1">

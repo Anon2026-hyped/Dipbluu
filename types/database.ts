@@ -2,7 +2,7 @@
  * Hand-written Supabase schema types (mirror of supabase/migrations).
  * When the Supabase CLI is wired up, replace with `supabase gen types`.
  *
- * Money columns are integer minor units (USD cents / NGN kobo), matching lib/money.ts.
+ * Money columns are integer minor units (USD cents), matching lib/money.ts.
  */
 
 export type ArtworkStatus = 'draft' | 'published' | 'sold_out'
@@ -18,12 +18,13 @@ export type OrderStatus =
   | 'refunded'
 export type PaymentProvider = 'stripe' | 'blockonomics' | 'paystack'
 export type PaymentStatus = 'pending' | 'confirmed' | 'failed' | 'expired'
-export type DeliveryType = 'lagos' | 'nigeria' | 'international'
+export type DeliveryType = 'standard' | 'international'
 
 export interface ArtworkRow {
   id: string
   slug: string
   title: string
+  medium: string | null
   edition: string
   description: string | null
   status: ArtworkStatus
@@ -49,7 +50,6 @@ export interface PrintOptionRow {
   edition_size: number | null
   stock: number
   price_usd_cents: number
-  price_ngn_kobo: number
 }
 
 export interface OrderRow {
@@ -118,7 +118,10 @@ export interface Database {
     Tables: {
       artworks: {
         Row: ArtworkRow
-        Insert: Insert<ArtworkRow, 'id' | 'created_at' | 'updated_at' | 'description' | 'status'>
+        Insert: Insert<
+          ArtworkRow,
+          'id' | 'created_at' | 'updated_at' | 'description' | 'medium' | 'status'
+        >
         Update: Partial<ArtworkRow>
         Relationships: []
       }

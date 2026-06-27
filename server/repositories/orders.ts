@@ -1,13 +1,7 @@
 import 'server-only'
 
 import { createAdminClient } from '@/lib/supabase/admin'
-import type {
-  DeliveryType,
-  OrderRow,
-  OrderStatus,
-  PaymentProvider,
-  PaymentStatus,
-} from '@/types/database'
+import type { OrderRow, OrderStatus, PaymentProvider, PaymentStatus } from '@/types/database'
 
 export interface NewOrderItem {
   artworkId: string | null
@@ -32,7 +26,6 @@ export interface CreateOrderInput {
   subtotalMinor: number
   shippingMinor: number
   totalMinor: number
-  deliveryType: DeliveryType
   paymentProvider: PaymentProvider
   idempotencyKey: string
   items: NewOrderItem[]

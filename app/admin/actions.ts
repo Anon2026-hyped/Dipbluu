@@ -26,11 +26,11 @@ function toWriteInput(formData: FormData): ArtworkWriteInput | { error: string }
   return {
     title: d.title,
     slug: d.slug,
+    medium: d.medium,
     edition: d.edition,
     description: d.description,
     status: d.status,
     priceUsdCents: Math.round(d.priceUsd * 100),
-    priceNgnKobo: Math.round(d.priceNgn * 100),
     stock: d.stock,
     editionSize: d.editionSize,
   }

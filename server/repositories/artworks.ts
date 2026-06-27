@@ -23,10 +23,10 @@ function toArtwork(row: ArtworkWithRelations): Artwork {
     id: row.id,
     slug: row.slug,
     title: row.title,
+    medium: row.medium ?? undefined,
     edition: row.edition,
     description: row.description ?? undefined,
     priceUsdCents: cheapest?.price_usd_cents ?? 0,
-    priceNgnKobo: cheapest?.price_ngn_kobo ?? 0,
     imageUrl: primary ? publicImageUrl(primary.storage_path) : undefined,
     blurhash: primary?.blurhash ?? undefined,
   }

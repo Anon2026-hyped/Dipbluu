@@ -136,7 +136,7 @@ export function Footer() {
             letterSpacing: '0.16em',
           }}
         >
-          © BOANERGES Limited · Lagos · All works the property of the artist.
+          © BOANERGES Limited · All works the property of the artist.
         </p>
         <div className="flex gap-4">
           {['IG', 'EMAIL', 'WA'].map((social) => (

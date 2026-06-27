@@ -20,18 +20,19 @@ export function getProvider(id: PaymentProviderId): PaymentProvider {
 
 /**
  * Routing rule:
- *   Nigeria (lagos/nigeria) → Paystack (NGN)
- *   International + card     → Stripe (USD)
- *   International + crypto   → Blockonomics (BTC, priced in USD)
+ *   card   → Stripe (USD)
+ *   crypto → Blockonomics (BTC, priced in USD)
  */
-export function selectProvider(deliveryType: DeliveryType, method: PaymentMethod): PaymentProvider {
-  if (deliveryType === 'lagos' || deliveryType === 'nigeria') return paystackProvider
+export function selectProvider(
+  _deliveryType: DeliveryType,
+  method: PaymentMethod,
+): PaymentProvider {
   return method === 'crypto' ? blockonomicsProvider : stripeProvider
 }
 
-/** Charge currency for a provider. */
-export function currencyFor(id: PaymentProviderId): Currency {
-  return id === 'paystack' ? 'NGN' : 'USD'
+/** All providers charge in USD. */
+export function currencyFor(_id: PaymentProviderId): Currency {
+  return 'USD'
 }
 
 export type { Currency, InitResult, PaymentProvider, PaymentProviderId } from './types'

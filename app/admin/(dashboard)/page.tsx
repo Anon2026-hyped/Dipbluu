@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { deleteArtworkAction } from '@/app/admin/actions'
-import { formatNgn, formatUsd } from '@/lib/money'
+import { formatUsd } from '@/lib/money'
 import { type AdminArtwork, listAllArtworks } from '@/server/repositories/adminArtworks'
 
 export const dynamic = 'force-dynamic'
@@ -51,9 +51,6 @@ export default async function AdminDashboard() {
               <div className="text-right">
                 <p className="font-bebas text-blue-bright">
                   {option ? formatUsd(option.price_usd_cents) : '—'}
-                </p>
-                <p className="font-barlow text-muted text-xs">
-                  {option ? formatNgn(option.price_ngn_kobo) : ''}
                 </p>
               </div>
               <div className="flex items-center gap-3">

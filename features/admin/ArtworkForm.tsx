@@ -6,11 +6,11 @@ import type { ActionState } from '@/app/admin/actions'
 export interface ArtworkFormValues {
   title: string
   slug: string
+  medium: string
   edition: string
   description: string
   status: 'draft' | 'published' | 'sold_out'
   priceUsd: number
-  priceNgn: number
   stock: number
   editionSize: number | ''
 }
@@ -70,6 +70,16 @@ export function ArtworkForm({ action, artworkId, initial, submitLabel }: Artwork
       </div>
 
       <label className="block">
+        <span className={labelText}>MEDIUM</span>
+        <input
+          name="medium"
+          defaultValue={initial?.medium}
+          placeholder="Oil on Canvas"
+          className={field}
+        />
+      </label>
+
+      <label className="block">
         <span className={labelText}>EDITION</span>
         <input
           name="edition"
@@ -89,32 +99,18 @@ export function ArtworkForm({ action, artworkId, initial, submitLabel }: Artwork
         />
       </label>
 
-      <div className="grid grid-cols-2 gap-6">
-        <label className="block">
-          <span className={labelText}>PRICE (USD)</span>
-          <input
-            name="priceUsd"
-            type="number"
-            step="0.01"
-            min="0"
-            required
-            defaultValue={initial?.priceUsd}
-            className={field}
-          />
-        </label>
-        <label className="block">
-          <span className={labelText}>PRICE (NGN)</span>
-          <input
-            name="priceNgn"
-            type="number"
-            step="1"
-            min="0"
-            required
-            defaultValue={initial?.priceNgn}
-            className={field}
-          />
-        </label>
-      </div>
+      <label className="block">
+        <span className={labelText}>PRICE (USD)</span>
+        <input
+          name="priceUsd"
+          type="number"
+          step="0.01"
+          min="0"
+          required
+          defaultValue={initial?.priceUsd}
+          className={field}
+        />
+      </label>
 
       <div className="grid grid-cols-2 gap-6">
         <label className="block">

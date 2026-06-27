@@ -5,7 +5,7 @@ export function HowItWorks() {
     {
       number: '01',
       title: 'CHOOSE YOUR PRINTS.',
-      body: 'One print (₦33,333), two (₦66,666), or three (₦99,999). One order per person.',
+      body: 'Select one, two, or three works from the collection. One order per person.',
     },
     {
       number: '02',
@@ -19,7 +19,7 @@ export function HowItWorks() {
     },
     {
       number: '04',
-      title: 'LAGOS BASED COLLECTORS.',
+      title: 'LOCAL COLLECTORS.',
       body: 'You will be invited to pick up your work at our partner gallery. Unbox on the spot.',
     },
     {
@@ -33,7 +33,7 @@ export function HowItWorks() {
     { number: '10', label: 'DAYS TO SHIP', color: 'text-blue-bright' },
     { number: '100%', label: 'HAND SIGNED', color: 'text-gold' },
     { number: '1/111', label: 'NUMBERED', color: 'text-white' },
-    { number: 'NGN', label: '+ CRYPTO', color: 'text-blue-bright' },
+    { number: 'USD', label: '+ CRYPTO', color: 'text-blue-bright' },
   ]
 
   return (

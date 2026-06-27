@@ -122,7 +122,7 @@ export function DropInfo() {
             letterSpacing: '0.18em',
           }}
         >
-          10 WORKS · 1,110 TOTAL EDITIONS · ₦33,333 EACH
+          10 WORKS · 1,110 TOTAL EDITIONS · OIL & ACRYLIC ON CANVAS
         </div>
 
         <p
@@ -132,14 +132,14 @@ export function DropInfo() {
             lineHeight: '1.8',
           }}
         >
-          Last month, I unveiled three new works as part of my latest collection. The Lion, The
-          Crown, and The Altar — collectively forming the brotherhood, now sit at the centre of this
-          blind drop.
+          Last month, I unveiled three new works as part of my latest collection. Nwunye Odogwu,
+          Panic, and African Cowboy — collectively forming the brotherhood, now sit at the centre of
+          this blind drop.
         </p>
 
         {/* Work chips */}
         <div className="flex flex-wrap gap-3">
-          {['THE LION', 'THE CROWN', 'THE ALTAR'].map((work) => (
+          {['NWUNYE ODOGWU', 'PANIC', 'AFRICAN COWBOY'].map((work) => (
             <button
               type="button"
               key={work}

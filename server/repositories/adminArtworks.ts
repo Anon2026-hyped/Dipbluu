@@ -13,11 +13,11 @@ export interface AdminArtwork extends ArtworkRow {
 export interface ArtworkWriteInput {
   title: string
   slug: string
+  medium?: string
   edition: string
   description?: string
   status: 'draft' | 'published' | 'sold_out'
   priceUsdCents: number
-  priceNgnKobo: number
   stock: number
   editionSize?: number
 }
@@ -50,6 +50,7 @@ export async function createArtwork(input: ArtworkWriteInput): Promise<string> {
     .insert({
       slug: input.slug,
       title: input.title,
+      medium: input.medium ?? null,
       edition: input.edition,
       description: input.description ?? null,
       status: input.status,
@@ -65,7 +66,6 @@ export async function createArtwork(input: ArtworkWriteInput): Promise<string> {
     edition_size: input.editionSize ?? null,
     stock: input.stock,
     price_usd_cents: input.priceUsdCents,
-    price_ngn_kobo: input.priceNgnKobo,
   })
   if (optError) throw new Error(`print option failed: ${optError.message}`)
   return artworkId
@@ -78,6 +78,7 @@ export async function updateArtwork(id: string, input: ArtworkWriteInput): Promi
     .update({
       slug: input.slug,
       title: input.title,
+      medium: input.medium ?? null,
       edition: input.edition,
       description: input.description ?? null,
       status: input.status,
@@ -85,14 +86,12 @@ export async function updateArtwork(id: string, input: ArtworkWriteInput): Promi
     .eq('id', id)
   if (error) throw new Error(`updateArtwork failed: ${error.message}`)
 
-  // Update the default print option's pricing/stock.
   await supabase
     .from('print_options')
     .update({
       stock: input.stock,
       edition_size: input.editionSize ?? null,
       price_usd_cents: input.priceUsdCents,
-      price_ngn_kobo: input.priceNgnKobo,
     })
     .eq('artwork_id', id)
 }

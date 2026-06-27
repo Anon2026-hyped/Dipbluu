@@ -361,9 +361,9 @@ export function Navbar({ onCartClick, onMenuClick, cartCount, isMenuOpen = false
         >
           {(
             [
-              { label: 'WORKS', href: '#works' },
-              { label: 'DROP', href: '#drop' },
-              { label: 'CONTACT', href: '#contact' },
+              { label: 'WORKS', href: '/#works' },
+              { label: 'DROP', href: '/#drop' },
+              { label: 'CONTACT', href: '/#contact' },
             ] as const
           ).map(({ label, href }) => (
             <a
@@ -440,39 +440,6 @@ export function Navbar({ onCartClick, onMenuClick, cartCount, isMenuOpen = false
               <CdUnit value={pad(countdown.seconds)} label="S" flash={flashSecs} />
             </div>
           </div>
-
-          {/* Divider */}
-          <div
-            className="hidden lg:block"
-            style={{ width: 1, height: 18, background: 'rgba(59,130,246,0.13)' }}
-            aria-hidden="true"
-          />
-
-          {/* Region (lg+) */}
-          <button
-            type="button"
-            className="hidden lg:block"
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              fontFamily: 'var(--font-barlow), sans-serif',
-              fontSize: 9,
-              letterSpacing: '0.22em',
-              color: 'rgba(148,184,248,0.38)',
-              padding: 0,
-              transition: 'color 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              ;(e.currentTarget as HTMLButtonElement).style.color = 'rgba(148,184,248,0.8)'
-            }}
-            onMouseLeave={(e) => {
-              ;(e.currentTarget as HTMLButtonElement).style.color = 'rgba(148,184,248,0.38)'
-            }}
-            aria-label="Change region"
-          >
-            NIGERIA · NGN ▾
-          </button>
 
           {/* Cart */}
           <button

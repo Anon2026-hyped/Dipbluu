@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { useCartStore } from '@/features/cart'
-import { formatNgn } from '@/lib/money'
+import { formatUsd } from '@/lib/money'
 
 interface CartDrawerProps {
   isOpen: boolean
@@ -11,7 +11,7 @@ interface CartDrawerProps {
 }
 
 export function CartDrawer({ isOpen, onClose, onCheckout }: CartDrawerProps) {
-  const { items, removeItem, updateQuantity, subtotalNgnKobo } = useCartStore()
+  const { items, removeItem, updateQuantity, subtotalUsdCents } = useCartStore()
   const count = items.reduce((sum, item) => sum + item.quantity, 0)
 
   return (
@@ -135,7 +135,7 @@ export function CartDrawer({ isOpen, onClose, onCheckout }: CartDrawerProps) {
                         className="font-bebas text-blue-bright text-xl"
                         style={{ letterSpacing: '0.05em' }}
                       >
-                        {formatNgn(item.artwork.priceNgnKobo * item.quantity)}
+                        {formatUsd(item.artwork.priceUsdCents * item.quantity)}
                       </p>
                     </div>
                   </div>
@@ -156,7 +156,7 @@ export function CartDrawer({ isOpen, onClose, onCheckout }: CartDrawerProps) {
                 SUBTOTAL
               </span>
               <span className="font-bebas text-2xl text-white" style={{ letterSpacing: '0.04em' }}>
-                {formatNgn(subtotalNgnKobo())}
+                {formatUsd(subtotalUsdCents())}
               </span>
             </div>
             <p
