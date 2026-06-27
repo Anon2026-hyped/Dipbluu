@@ -1,65 +1,101 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+
+const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+
+function LiveStamp() {
+  const [stamp, setStamp] = useState('')
+
+  useEffect(() => {
+    const update = () => {
+      const now = new Date()
+      setStamp(`${MONTHS[now.getMonth()]} · ${now.getFullYear()}`)
+    }
+    update()
+
+    // Recalculate at midnight so the month/year flips without a refresh
+    const msUntilMidnight = () => {
+      const now = new Date()
+      return (
+        new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime() - now.getTime()
+      )
+    }
+    const timeout = setTimeout(() => {
+      update()
+    }, msUntilMidnight())
+
+    return () => clearTimeout(timeout)
+  }, [])
+
+  if (!stamp) return null
+
+  return (
+    <span className="font-bebas text-gold" style={{ fontSize: '13px', letterSpacing: '0.2em' }}>
+      {stamp}
+    </span>
+  )
+}
+
+const STATIC_ITEMS = [
+  'NWUNYE ODOGWU',
+  'PANIC',
+  'AFRICAN COWBOY',
+  '333 EDITIONS',
+  'A BLIND DROP',
+  'BOANERGES',
+  'A ROYAL PRIESTHOOD',
+]
+
+// Sentinel value — rendered as <LiveStamp /> instead of plain text
+const LIVE_MARKER = '__LIVE__'
+
+const ITEMS = [...STATIC_ITEMS, LIVE_MARKER]
+
+function MarqueeItem({ item }: { item: string }) {
+  return (
+    <div className="flex items-center gap-4 whitespace-nowrap">
+      {item === LIVE_MARKER ? (
+        <LiveStamp />
+      ) : (
+        <span
+          className="font-bebas text-muted"
+          style={{ fontSize: '13px', letterSpacing: '0.2em' }}
+        >
+          {item}
+        </span>
+      )}
+      <div
+        className="rounded-full bg-blue-bright opacity-60"
+        style={{ width: '4px', height: '4px' }}
+      />
+    </div>
+  )
+}
+
 export function Marquee() {
-  const items = [
-    'NWUNYE ODOGWU',
-    'PANIC',
-    'AFRICAN COWBOY',
-    '333 EDITIONS',
-    'A BLIND DROP',
-    'BOANERGES',
-    '2025',
-    'A ROYAL PRIESTHOOD',
-  ]
+  const looped = [...ITEMS, ...ITEMS]
 
   return (
     <section className="border-t border-b border-border-default bg-panel py-3.5 overflow-hidden">
       <div className="flex items-center">
-        {/* Animated scroll container */}
         <div
-          className="marquee-track flex gap-4 animate-scroll-slow"
-          style={{ animation: 'scroll-slow 22s linear infinite' }}
+          className="marquee-track flex gap-4"
+          style={{ animation: 'scroll-slow 26s linear infinite' }}
         >
-          {/* First set */}
-          {[...items, ...items].map((item, i) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: static decorative marquee — items are intentionally duplicated and never reordered
-            <div key={`${item}-${i}`} className="flex items-center gap-4 whitespace-nowrap">
-              <span
-                className="font-bebas text-muted"
-                style={{
-                  fontSize: '13px',
-                  letterSpacing: '0.2em',
-                }}
-              >
-                {item}
-              </span>
-              <div
-                className="w-1 h-1 rounded-full bg-blue-bright opacity-60"
-                style={{ width: '4px', height: '4px' }}
-              />
-            </div>
+          {looped.map((item, i) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: decorative marquee — items duplicated intentionally
+            <MarqueeItem key={`a-${i}`} item={item} />
           ))}
         </div>
 
-        {/* Second set for seamless loop (duplicated for CSS animation) */}
         <div
-          className="marquee-track flex gap-4 animate-scroll-slow"
-          style={{ animation: 'scroll-slow 22s linear infinite' }}
+          className="marquee-track flex gap-4"
+          style={{ animation: 'scroll-slow 26s linear infinite' }}
         >
-          {[...items, ...items].map((item, i) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: static decorative marquee — items are intentionally duplicated and never reordered
-            <div key={`${item}-dup-${i}`} className="flex items-center gap-4 whitespace-nowrap">
-              <span
-                className="font-bebas text-muted"
-                style={{
-                  fontSize: '13px',
-                  letterSpacing: '0.2em',
-                }}
-              >
-                {item}
-              </span>
-              <div className="w-1 h-1 rounded-full bg-blue-bright opacity-60" />
-            </div>
+          {looped.map((item, i) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: decorative marquee — items duplicated intentionally
+            <MarqueeItem key={`b-${i}`} item={item} />
           ))}
         </div>
       </div>
