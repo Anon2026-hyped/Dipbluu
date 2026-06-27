@@ -5,21 +5,23 @@ import { useEffect, useRef, useState } from 'react'
 
 const IMG = 'https://raw.githubusercontent.com/Anon2026-hyped/Boanerges/main'
 
-const IMAGES = [
-  `${IMG}/Hero(1).jpg`,
-  `${IMG}/IMG_1089(1).jpg`,
-  `${IMG}/IMG_1093(1).jpg`,
-  `${IMG}/IMG_1094(1).jpg`,
-  `${IMG}/IMG_1095(1).jpg`,
-  `${IMG}/IMG_1097(1).jpg`,
-  `${IMG}/IMG_1098(1).jpg`,
-  `${IMG}/IMG_1099(1).jpg`,
-  `${IMG}/IMG_1100(1).jpg`,
-  `${IMG}/IMG_1101(1).jpg`,
+// Ordered to match lib/artworks.ts so alts are descriptive
+const IMAGES: { src: string; alt: string }[] = [
+  { src: `${IMG}/Hero(1).jpg`, alt: 'Chaos in Eko' },
+  { src: `${IMG}/IMG_1089(1).jpg`, alt: 'Nwunye Odogwu' },
+  { src: `${IMG}/IMG_1093(1).jpg`, alt: 'Panic' },
+  { src: `${IMG}/IMG_1094(1).jpg`, alt: 'African Cowboy' },
+  { src: `${IMG}/IMG_1095(1).jpg`, alt: 'The Watcher' },
+  { src: `${IMG}/IMG_1097(1).jpg`, alt: 'The Guardian' },
+  { src: `${IMG}/IMG_1098(1).jpg`, alt: 'Die Lit' },
+  { src: `${IMG}/IMG_1099(1).jpg`, alt: 'Ampute Samurai' },
+  { src: `${IMG}/IMG_1100(1).jpg`, alt: 'Odogwu in Repose' },
+  { src: `${IMG}/IMG_1101(1).jpg`, alt: 'End of Days' },
 ]
 
 const SLIDE_DUR = 6
 const TOTAL = IMAGES.length * SLIDE_DUR
+const IMAGE_COUNT = IMAGES.length
 
 const FADE_IN_END = ((0.4 / TOTAL) * 100).toFixed(3)
 const HOLD_END = (((SLIDE_DUR - 0.6) / TOTAL) * 100).toFixed(3)
@@ -30,8 +32,9 @@ export function Hero() {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     intervalRef.current = setInterval(() => {
-      setCounter((c) => (c % IMAGES.length) + 1)
+      setCounter((c) => (c % IMAGE_COUNT) + 1)
     }, SLIDE_DUR * 1000)
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
@@ -142,7 +145,7 @@ export function Hero() {
       >
         {/* ── Slide stack ── */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
-          {IMAGES.map((src, i) => (
+          {IMAGES.map(({ src, alt }, i) => (
             <div
               key={src}
               style={{
@@ -154,7 +157,7 @@ export function Hero() {
             >
               <Image
                 src={src}
-                alt={`Slide ${i + 1}`}
+                alt={alt}
                 fill
                 sizes="100vw"
                 priority={i === 0}
@@ -304,7 +307,7 @@ export function Hero() {
             animation: 'corner-in 1s 1.6s ease forwards',
           }}
         >
-          {String(counter).padStart(2, '0')} / {String(IMAGES.length).padStart(2, '0')}
+          {String(counter).padStart(2, '0')} / {String(IMAGE_COUNT).padStart(2, '0')}
         </div>
 
         {/* ── Scroll cue ── */}

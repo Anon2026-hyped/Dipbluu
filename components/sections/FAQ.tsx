@@ -30,18 +30,25 @@ const FAQ_ITEMS = [
 ]
 
 interface AccordionItemProps {
+  id: string
   q: string
   a: string
   isOpen: boolean
   onToggle: () => void
 }
 
-function AccordionItem({ q, a, isOpen, onToggle }: AccordionItemProps) {
+function AccordionItem({ id, q, a, isOpen, onToggle }: AccordionItemProps) {
+  const answerId = `faq-answer-${id}`
+  const questionId = `faq-question-${id}`
+
   return (
-    <div className="border-b border-border-default hover:bg-white/1.5 transition-colors">
+    <div className="border-b border-border-default transition-colors hover:bg-white/[0.015]">
       <button
         type="button"
+        id={questionId}
         onClick={onToggle}
+        aria-expanded={isOpen}
+        aria-controls={answerId}
         className="w-full flex items-center justify-between py-6 px-0 text-left group"
       >
         <span
@@ -51,32 +58,42 @@ function AccordionItem({ q, a, isOpen, onToggle }: AccordionItemProps) {
           {q}
         </span>
         <span
-          className={`text-muted group-hover:text-blue-bright transition-all duration-300 ${
-            isOpen ? 'rotate-45' : ''
-          }`}
-          style={{ fontSize: '18px', transform: isOpen ? 'rotate(45deg)' : 'rotate(0deg)' }}
+          aria-hidden="true"
+          className="text-muted group-hover:text-blue-bright transition-all duration-300"
+          style={{
+            fontSize: '18px',
+            display: 'inline-block',
+            transform: isOpen ? 'rotate(45deg)' : 'rotate(0deg)',
+            transition: 'transform 0.3s ease',
+          }}
         >
           +
         </span>
       </button>
 
-      {/* Answer */}
-      <div
-        className="overflow-hidden transition-all duration-450 ease-out"
+      <section
+        id={answerId}
+        aria-labelledby={questionId}
+        hidden={!isOpen}
+        className="overflow-hidden"
         style={{
-          maxHeight: isOpen ? '280px' : '0px',
+          display: 'grid',
+          gridTemplateRows: isOpen ? '1fr' : '0fr',
+          transition: 'grid-template-rows 0.35s ease',
         }}
       >
-        <p
-          className="pb-6 font-garamond italic text-white/68 max-w-xl"
-          style={{
-            fontSize: 'clamp(15px, 1.6vw, 18px)',
-            lineHeight: '1.75',
-          }}
-        >
-          {a}
-        </p>
-      </div>
+        <div className="min-h-0">
+          <p
+            className="pb-6 font-garamond italic text-white/70 max-w-xl"
+            style={{
+              fontSize: 'clamp(15px, 1.6vw, 18px)',
+              lineHeight: '1.75',
+            }}
+          >
+            {a}
+          </p>
+        </div>
+      </section>
     </div>
   )
 }
@@ -91,7 +108,6 @@ export function FAQ() {
   return (
     <section id="questions" className="py-20 px-6 sm:px-12">
       <div className="max-w-2xl mx-auto">
-        {/* Header */}
         <div
           className="text-center font-barlow text-muted mb-4"
           style={{ fontSize: '10px', letterSpacing: '0.32em' }}
@@ -109,11 +125,11 @@ export function FAQ() {
           QUESTIONS
         </h2>
 
-        {/* Accordion */}
         <div className="border-t border-border-default">
           {FAQ_ITEMS.map((item, index) => (
             <AccordionItem
               key={item.q}
+              id={String(index)}
               q={item.q}
               a={item.a}
               isOpen={openIndex === index}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useCartStore } from '@/features/cart'
 import { useCheckout } from '@/features/checkout/useCheckout'
 import { track } from '@/lib/analytics'
@@ -16,6 +16,37 @@ type DeliveryType = 'standard' | 'international'
 type PaymentMethod = 'card' | 'crypto'
 
 export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
+  const dialogRef = useRef<HTMLDivElement>(null)
+
+  // Close on Escape + trap focus inside the dialog
+  useEffect(() => {
+    if (!isOpen) return
+    const firstFocusable = dialogRef.current?.querySelector<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+    )
+    firstFocusable?.focus()
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose()
+        return
+      }
+      if (e.key !== 'Tab') return
+      const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      )
+      if (!focusable?.length) return
+      const first = focusable[0] as HTMLElement
+      const last = focusable[focusable.length - 1] as HTMLElement
+      if (e.shiftKey ? document.activeElement === first : document.activeElement === last) {
+        e.preventDefault()
+        ;(e.shiftKey ? last : first).focus()
+      }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [isOpen, onClose])
+
   const { items, clearCart, subtotalUsdCents } = useCartStore()
   const { loading, error, crypto, orderNumber, start, reset } = useCheckout()
 
@@ -81,8 +112,14 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     'w-full bg-transparent border-b border-white/14 focus:border-blue-bright pb-2 text-sm placeholder:text-muted transition-colors'
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="checkout-modal-title"
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+    >
       <div
+        ref={dialogRef}
         className="bg-black border border-border-blue rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto"
         style={{ animation: 'scale-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)' }}
       >
@@ -103,6 +140,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           {step === 1 && (
             <div>
               <h2
+                id="checkout-modal-title"
                 className="font-bebas text-white mb-6"
                 style={{ fontSize: '24px', letterSpacing: '0.04em' }}
               >
@@ -182,6 +220,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           {step === 2 && (
             <div>
               <h2
+                id="checkout-modal-title"
                 className="font-bebas text-white mb-6"
                 style={{ fontSize: '24px', letterSpacing: '0.04em' }}
               >

@@ -29,7 +29,7 @@ const config: Config = {
         'gold-dim': 'rgba(201,168,76,0.15)',
         white: '#ffffff',
         'off-white': '#f0ede8',
-        muted: '#555555',
+        muted: '#787878',
         'muted-2': '#888888',
         'border-default': 'rgba(255,255,255,0.06)',
         'border-blue': 'rgba(37,99,235,0.20)',

@@ -189,6 +189,69 @@ function CdUnit({ value, label, flash }: { value: string; label: string; flash: 
   )
 }
 
+/* ── Drop countdown — isolated leaf so only it re-renders each second ── */
+function DropCountdown() {
+  const pad = (n: number) => String(n).padStart(2, '0')
+  const [flashSecs, setFlashSecs] = useState(false)
+  const [countdown, setCountdown] = useState({ days: 4, hours: 11, minutes: 30, seconds: 0 })
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFlashSecs(true)
+      setTimeout(() => setFlashSecs(false), 160)
+      setCountdown((prev) => {
+        let { days, hours, minutes, seconds } = prev
+        seconds--
+        if (seconds < 0) {
+          seconds = 59
+          minutes--
+        }
+        if (minutes < 0) {
+          minutes = 59
+          hours--
+        }
+        if (hours < 0) {
+          hours = 23
+          days--
+        }
+        if (days < 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 }
+        return { days, hours, minutes, seconds }
+      })
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <div
+      className="hidden lg:flex"
+      style={{ flexDirection: 'column', alignItems: 'center', gap: 3 }}
+      role="timer"
+      aria-label="Drop countdown"
+    >
+      <span
+        style={{
+          fontFamily: 'var(--font-barlow), sans-serif',
+          fontSize: 8,
+          letterSpacing: '0.28em',
+          color: 'rgba(148,184,248,0.4)',
+          fontWeight: 400,
+        }}
+      >
+        DROP ENDS IN
+      </span>
+      <div style={{ display: 'flex', alignItems: 'baseline' }}>
+        <CdUnit value={pad(countdown.days)} label="D" flash={false} />
+        <Dot />
+        <CdUnit value={pad(countdown.hours)} label="H" flash={false} />
+        <Dot />
+        <CdUnit value={pad(countdown.minutes)} label="M" flash={false} />
+        <Dot />
+        <CdUnit value={pad(countdown.seconds)} label="S" flash={flashSecs} />
+      </div>
+    </div>
+  )
+}
+
 /* ── Cart icon ── */
 function CartIcon() {
   return (
@@ -213,8 +276,6 @@ function CartIcon() {
 export function Navbar({ onCartClick, onMenuClick, cartCount, isMenuOpen = false }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false)
   const [menuHover, setMenuHover] = useState(false)
-  const [flashSecs, setFlashSecs] = useState(false)
-  const [countdown, setCountdown] = useState({ days: 4, hours: 11, minutes: 30, seconds: 0 })
 
   /* scroll detection */
   useEffect(() => {
@@ -222,36 +283,6 @@ export function Navbar({ onCartClick, onMenuClick, cartCount, isMenuOpen = false
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
-
-  /* countdown */
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setFlashSecs(true)
-      setTimeout(() => setFlashSecs(false), 160)
-
-      setCountdown((prev) => {
-        let { days, hours, minutes, seconds } = prev
-        seconds--
-        if (seconds < 0) {
-          seconds = 59
-          minutes--
-        }
-        if (minutes < 0) {
-          minutes = 59
-          hours--
-        }
-        if (hours < 0) {
-          hours = 23
-          days--
-        }
-        if (days < 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 }
-        return { days, hours, minutes, seconds }
-      })
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [])
-
-  const pad = (n: number) => String(n).padStart(2, '0')
 
   /* ── styles ── */
   const navStyle: React.CSSProperties = {
@@ -413,33 +444,7 @@ export function Navbar({ onCartClick, onMenuClick, cartCount, isMenuOpen = false
         {/* ── RIGHT CLUSTER ── */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
           {/* Countdown (lg+ — kept off phones to avoid clutter; also lives in the Drop section) */}
-          <div
-            className="hidden lg:flex"
-            style={{ flexDirection: 'column', alignItems: 'center', gap: 3 }}
-            role="timer"
-            aria-label="Drop countdown"
-          >
-            <span
-              style={{
-                fontFamily: 'var(--font-barlow), sans-serif',
-                fontSize: 8,
-                letterSpacing: '0.28em',
-                color: 'rgba(148,184,248,0.4)',
-                fontWeight: 400,
-              }}
-            >
-              DROP ENDS IN
-            </span>
-            <div style={{ display: 'flex', alignItems: 'baseline' }}>
-              <CdUnit value={pad(countdown.days)} label="D" flash={false} />
-              <Dot />
-              <CdUnit value={pad(countdown.hours)} label="H" flash={false} />
-              <Dot />
-              <CdUnit value={pad(countdown.minutes)} label="M" flash={false} />
-              <Dot />
-              <CdUnit value={pad(countdown.seconds)} label="S" flash={flashSecs} />
-            </div>
-          </div>
+          <DropCountdown />
 
           {/* Cart */}
           <button

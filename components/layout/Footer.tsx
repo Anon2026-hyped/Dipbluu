@@ -4,11 +4,27 @@ import { useState } from 'react'
 
 export function Footer() {
   const [email, setEmail] = useState('')
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle subscription
-    setEmail('')
+    if (!email.trim()) return
+    setStatus('loading')
+    try {
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      if (res.ok) {
+        setStatus('success')
+        setEmail('')
+      } else {
+        setStatus('error')
+      }
+    } catch {
+      setStatus('error')
+    }
   }
 
   return (
@@ -103,27 +119,48 @@ export function Footer() {
             Notes from the studio. Sent when something is worth saying.
           </p>
 
-          {/* Newsletter */}
-          <form onSubmit={handleSubscribe} className="flex flex-col gap-2">
-            <input
-              id="newsletter-email"
-              name="newsletterEmail"
-              type="email"
-              placeholder="Your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="bg-transparent border-b border-white/14 focus:border-blue-bright pb-2 text-sm placeholder:text-muted transition-colors"
-              style={{ fontSize: '14px' }}
-              aria-label="Newsletter email"
-            />
-            <button
-              type="submit"
-              className="font-barlow text-muted hover:text-blue-bright transition-colors text-xs border-b border-white/22 pb-1 inline-flex items-center mt-3"
-              style={{ fontSize: '9.5px', letterSpacing: '0.28em', width: 'fit-content' }}
+          {status === 'success' ? (
+            <p
+              className="font-barlow text-blue-bright"
+              style={{ fontSize: '10px', letterSpacing: '0.22em' }}
             >
-              SUBSCRIBE
-            </button>
-          </form>
+              YOU'RE ON THE LIST.
+            </p>
+          ) : (
+            <form onSubmit={handleSubscribe} className="flex flex-col gap-2">
+              <label htmlFor="newsletter-email" className="sr-only">
+                Email address
+              </label>
+              <input
+                id="newsletter-email"
+                name="newsletterEmail"
+                type="email"
+                placeholder="Your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={status === 'loading'}
+                className="bg-transparent border-b border-white/14 focus:border-blue-bright pb-2 text-sm placeholder:text-muted transition-colors disabled:opacity-50"
+                style={{ fontSize: '14px' }}
+              />
+              {status === 'error' && (
+                <p
+                  className="font-barlow text-red-400"
+                  style={{ fontSize: '9px', letterSpacing: '0.2em' }}
+                >
+                  SOMETHING WENT WRONG. TRY AGAIN.
+                </p>
+              )}
+              <button
+                type="submit"
+                disabled={status === 'loading'}
+                className="font-barlow text-muted hover:text-blue-bright transition-colors text-xs border-b border-white/22 pb-1 inline-flex items-center mt-3 disabled:opacity-50"
+                style={{ fontSize: '9.5px', letterSpacing: '0.28em', width: 'fit-content' }}
+              >
+                {status === 'loading' ? 'SENDING…' : 'SUBSCRIBE'}
+              </button>
+            </form>
+          )}
         </div>
       </div>
 

@@ -17,7 +17,7 @@ export function Marquee() {
       <div className="flex items-center">
         {/* Animated scroll container */}
         <div
-          className="flex gap-4 animate-scroll-slow"
+          className="marquee-track flex gap-4 animate-scroll-slow"
           style={{ animation: 'scroll-slow 22s linear infinite' }}
         >
           {/* First set */}
@@ -43,7 +43,7 @@ export function Marquee() {
 
         {/* Second set for seamless loop (duplicated for CSS animation) */}
         <div
-          className="flex gap-4 animate-scroll-slow"
+          className="marquee-track flex gap-4 animate-scroll-slow"
           style={{ animation: 'scroll-slow 22s linear infinite' }}
         >
           {[...items, ...items].map((item, i) => (
@@ -65,7 +65,7 @@ export function Marquee() {
       </div>
 
       <style>{`
-        div:hover {
+        .marquee-track:hover {
           animation-play-state: paused;
         }
       `}</style>

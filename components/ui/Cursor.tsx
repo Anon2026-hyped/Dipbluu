@@ -1,72 +1,97 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
+/**
+ * Custom cursor for pointer-capable devices.
+ * Drives DOM position via requestAnimationFrame + refs — never via React state —
+ * so mouse-move events cause zero React re-renders.
+ * Automatically hidden on touch-only devices.
+ */
 export function Cursor() {
   const dotRef = useRef<HTMLDivElement>(null)
   const ringRef = useRef<HTMLDivElement>(null)
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
-  const [ringPos, setRingPos] = useState({ x: 0, y: 0 })
-  const [isHovering, setIsHovering] = useState(false)
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY })
+    // Only run on devices with a precise pointer (mouse/trackpad)
+    if (!window.matchMedia('(pointer: fine)').matches) return
 
-      // Ring follows with delay
-      setTimeout(() => {
-        setRingPos({ x: e.clientX, y: e.clientY })
-      }, 50)
+    const pos = { x: -100, y: -100 }
+    const ring = { x: -100, y: -100 }
+    let hovering = false
+    let rafId = 0
 
-      // Check if hovering over interactive element
+    const onMove = (e: MouseEvent) => {
+      pos.x = e.clientX
+      pos.y = e.clientY
+
       const target = e.target as HTMLElement
-      const isInteractive =
-        target.tagName === 'A' ||
-        target.tagName === 'BUTTON' ||
-        target.hasAttribute('role') === true ||
+      hovering = !!(
+        target.closest('a') ||
         target.closest('button') ||
-        target.closest('a')
-
-      setIsHovering(!!isInteractive)
+        target.closest('[role="button"]')
+      )
     }
 
-    window.addEventListener('mousemove', handleMouseMove)
-    return () => window.removeEventListener('mousemove', handleMouseMove)
+    const tick = () => {
+      // Lerp ring toward cursor
+      ring.x += (pos.x - ring.x) * 0.18
+      ring.y += (pos.y - ring.y) * 0.18
+
+      const dot = dotRef.current
+      const ringEl = ringRef.current
+
+      if (dot) {
+        dot.style.transform = `translate(${pos.x}px, ${pos.y}px) translate(-50%, -50%)`
+        dot.style.width = hovering ? '6px' : '10px'
+        dot.style.height = hovering ? '6px' : '10px'
+        dot.style.background = hovering ? '#c9a84c' : '#3b82f6'
+      }
+
+      if (ringEl) {
+        ringEl.style.transform = `translate(${ring.x}px, ${ring.y}px) translate(-50%, -50%)`
+        ringEl.style.width = hovering ? '52px' : '36px'
+        ringEl.style.height = hovering ? '52px' : '36px'
+        ringEl.style.borderColor = hovering ? '#c9a84c' : 'rgba(59,130,246,0.5)'
+      }
+
+      rafId = requestAnimationFrame(tick)
+    }
+
+    window.addEventListener('mousemove', onMove, { passive: true })
+    rafId = requestAnimationFrame(tick)
+
+    return () => {
+      window.removeEventListener('mousemove', onMove)
+      cancelAnimationFrame(rafId)
+    }
   }, [])
 
   return (
     <>
-      {/* Dot cursor */}
       <div
         ref={dotRef}
-        className={`fixed pointer-events-none z-50 transition-all duration-200 ${
-          isHovering ? 'scale-75' : 'scale-100'
-        }`}
+        className="fixed pointer-events-none z-[999]"
         style={{
-          left: `${mousePos.x}px`,
-          top: `${mousePos.y}px`,
-          width: isHovering ? '6px' : '10px',
-          height: isHovering ? '6px' : '10px',
+          width: '10px',
+          height: '10px',
           borderRadius: '50%',
-          background: isHovering ? '#c9a84c' : '#3b82f6',
-          transform: 'translate(-50%, -50%)',
+          background: '#3b82f6',
           mixBlendMode: 'difference',
+          transition: 'width 0.15s, height 0.15s, background 0.15s',
+          willChange: 'transform',
         }}
       />
-
-      {/* Ring cursor */}
       <div
         ref={ringRef}
-        className="fixed pointer-events-none z-50"
+        className="fixed pointer-events-none z-[999]"
         style={{
-          left: `${ringPos.x}px`,
-          top: `${ringPos.y}px`,
-          width: isHovering ? '52px' : '36px',
-          height: isHovering ? '52px' : '36px',
-          border: isHovering ? '1px solid #c9a84c' : '1px solid rgba(59, 130, 246, 0.5)',
+          width: '36px',
+          height: '36px',
+          border: '1px solid rgba(59,130,246,0.5)',
           borderRadius: '50%',
-          transform: 'translate(-50%, -50%)',
-          transition: 'all 0.15s ease-out',
+          transition: 'width 0.15s, height 0.15s, border-color 0.15s',
+          willChange: 'transform',
         }}
       />
     </>

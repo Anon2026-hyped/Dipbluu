@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 
 export function DropInfo() {
@@ -139,18 +140,22 @@ export function DropInfo() {
 
         {/* Work chips */}
         <div className="flex flex-wrap gap-3">
-          {['NWUNYE ODOGWU', 'PANIC', 'AFRICAN COWBOY'].map((work) => (
-            <button
-              type="button"
-              key={work}
+          {[
+            { label: 'NWUNYE ODOGWU', slug: 'nwunye-odogwu' },
+            { label: 'PANIC', slug: 'panic' },
+            { label: 'AFRICAN COWBOY', slug: 'african-cowboy' },
+          ].map(({ label, slug }) => (
+            <Link
+              key={slug}
+              href={`/art/${slug}`}
               className="border border-gold/30 text-gold/75 hover:border-gold hover:bg-gold-dim px-3 py-2 transition-colors"
               style={{
                 fontSize: '9.5px',
                 letterSpacing: '0.2em',
               }}
             >
-              {work}
-            </button>
+              {label}
+            </Link>
           ))}
         </div>
       </div>
