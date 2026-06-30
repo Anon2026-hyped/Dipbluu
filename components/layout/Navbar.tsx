@@ -386,12 +386,13 @@ export function Navbar({ onCartClick, onMenuClick, cartCount, isMenuOpen = false
             left: '50%',
             transform: 'translateX(-50%)',
             alignItems: 'center',
-            gap: 36,
+            gap: 28,
           }}
           className="hidden lg:flex"
         >
           {(
             [
+              { label: 'GALLERY', href: '/gallery' },
               { label: 'WORKS', href: '/#works' },
               { label: 'DROP', href: '/#drop' },
               { label: 'CONTACT', href: '/#contact' },
@@ -405,7 +406,7 @@ export function Navbar({ onCartClick, onMenuClick, cartCount, isMenuOpen = false
                 fontWeight: 400,
                 fontSize: 10,
                 letterSpacing: '0.3em',
-                color: 'rgba(180,195,230,0.55)',
+                color: 'rgba(180,195,230,0.68)',
                 textDecoration: 'none',
                 position: 'relative',
                 paddingBottom: 2,
@@ -417,7 +418,7 @@ export function Navbar({ onCartClick, onMenuClick, cartCount, isMenuOpen = false
                 if (bar) bar.style.width = '100%'
               }}
               onMouseLeave={(e) => {
-                ;(e.currentTarget as HTMLAnchorElement).style.color = 'rgba(180,195,230,0.55)'
+                ;(e.currentTarget as HTMLAnchorElement).style.color = 'rgba(180,195,230,0.68)'
                 const bar = e.currentTarget.querySelector('span') as HTMLSpanElement
                 if (bar) bar.style.width = '0%'
               }}

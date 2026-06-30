@@ -25,7 +25,7 @@ const SOCIALS = [
   { label: 'INSTAGRAM', href: 'https://instagram.com/boanergizz', external: true },
   { label: 'EMAIL', href: 'mailto:bludeep4@gmail.com', external: false },
   // Replace the number below with the studio's WhatsApp line.
-  { label: 'WHATSAPP', href: 'https://wa.me/2340000000000', external: true },
+  { label: 'WHATSAPP', href: 'https://wa.me/2347041222119', external: true },
 ]
 
 export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
@@ -44,13 +44,16 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
         aria-label="Close menu"
         tabIndex={isOpen ? 0 : -1}
         onClick={onClose}
-        className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
+        className={`fixed inset-0 z-40 bg-black/60 transition-opacity duration-300 ${
           isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
         }`}
       />
 
       {/* Panel */}
       <aside
+        role="dialog"
+        aria-modal={isOpen ? 'true' : undefined}
+        aria-label="Navigation menu"
         aria-hidden={!isOpen}
         className={`fixed top-0 right-0 z-50 flex h-full w-full max-w-sm flex-col overflow-y-auto border-border-blue border-l bg-near-black/95 backdrop-blur-xl transition-transform duration-500 ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
@@ -62,9 +65,12 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
           type="button"
           onClick={onClose}
           aria-label="Close menu"
-          className="absolute top-5 right-5 z-10 text-2xl text-white/50 transition-all duration-300 hover:rotate-90 hover:text-blue-bright"
+          className="absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-sm border border-white/10 text-white/50 transition-all duration-300 hover:rotate-90 hover:border-blue-bright/40 hover:text-blue-bright"
         >
-          ✕
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+            <line x1="1" y1="1" x2="11" y2="11" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+            <line x1="11" y1="1" x2="1" y2="11" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+          </svg>
         </button>
 
         {/* Hero image */}
