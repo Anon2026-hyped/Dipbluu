@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import '@/animations/keyframes.css'
 import { Analytics } from '@/components/analytics/Analytics'
+import { AmbientJazz } from '@/components/ui/AmbientJazz'
 import { fontVariables } from '@/lib/fonts'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={fontVariables}>
       <body>
         {children}
+        <AmbientJazz />
         <Analytics />
       </body>
     </html>
