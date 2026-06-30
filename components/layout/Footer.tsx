@@ -84,12 +84,13 @@ export function Footer() {
               Instagram →
             </a>
             <a
-              // biome-ignore lint/a11y/useValidAnchor: placeholder — wire to real social URL
-              href="#"
+              href="https://wa.me/2347041222119"
+              target="_blank"
+              rel="noopener noreferrer"
               className="font-garamond italic text-white/55 hover:text-blue-bright transition-colors block"
               style={{ fontSize: '15px' }}
             >
-              WhatsApp
+              WhatsApp →
             </a>
             <a
               href="mailto:bludeep4@gmail.com"
@@ -176,18 +177,20 @@ export function Footer() {
           © BOANERGES Limited · All works the property of the artist.
         </p>
         <div className="flex gap-4">
-          {['IG', 'EMAIL', 'WA'].map((social) => (
+          {[
+            { label: 'IG', href: 'https://instagram.com/boanergizz', external: true },
+            { label: 'EMAIL', href: 'mailto:bludeep4@gmail.com', external: false },
+            { label: 'WA', href: 'https://wa.me/2347041222119', external: true },
+          ].map(({ label, href, external }) => (
             <a
-              key={social}
-              // biome-ignore lint/a11y/useValidAnchor: placeholder — wire to real social URL
-              href="#"
+              key={label}
+              href={href}
+              target={external ? '_blank' : undefined}
+              rel={external ? 'noopener noreferrer' : undefined}
               className="font-barlow text-muted hover:text-blue-bright transition-colors text-xs"
-              style={{
-                fontSize: '9.5px',
-                letterSpacing: '0.2em',
-              }}
+              style={{ fontSize: '9.5px', letterSpacing: '0.2em' }}
             >
-              {social}
+              {label}
             </a>
           ))}
         </div>
