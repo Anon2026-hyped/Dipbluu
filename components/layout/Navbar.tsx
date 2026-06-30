@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useEffect, useState } from 'react'
 
 // Keyframes (pulseGlow, shimmerLine, tickFlash) live in animations/keyframes.css.
@@ -11,147 +12,18 @@ interface NavbarProps {
   isMenuOpen?: boolean
 }
 
-/* ── Lion Sigil ── */
-function LionSigil() {
+/* ── Lion mark — white silhouette, recoloured to match the wordmark ── */
+function LionMark() {
   return (
-    <svg
-      width="36"
-      height="36"
-      viewBox="0 0 40 40"
-      fill="none"
+    <Image
+      src="/images/logo-white.png"
+      alt=""
+      width={53}
+      height={36}
+      priority
       aria-hidden="true"
       style={{ animation: 'pulseGlow 4s ease-in-out infinite', display: 'block' }}
-    >
-      {/* rings */}
-      <circle cx="20" cy="20" r="18" stroke="rgba(37,99,235,0.18)" strokeWidth="0.6" />
-      <circle
-        cx="20"
-        cy="20"
-        r="15"
-        stroke="rgba(37,99,235,0.12)"
-        strokeWidth="0.5"
-        strokeDasharray="2 3"
-      />
-
-      {/* mane outline */}
-      <path
-        d="M20 5 Q29 5 34 13 Q38 20 34 27 Q29 35 20 35 Q11 35 6 27 Q2 20 6 13 Q11 5 20 5"
-        fill="none"
-        stroke="rgba(37,99,235,0.5)"
-        strokeWidth="0.8"
-      />
-
-      {/* mane spikes */}
-      <line
-        x1="14"
-        y1="7.5"
-        x2="12.5"
-        y2="3.5"
-        stroke="rgba(37,99,235,0.6)"
-        strokeWidth="0.7"
-        strokeLinecap="round"
-      />
-      <line
-        x1="20"
-        y1="6"
-        x2="20"
-        y2="1.5"
-        stroke="rgba(59,130,246,0.75)"
-        strokeWidth="0.9"
-        strokeLinecap="round"
-      />
-      <line
-        x1="26"
-        y1="7.5"
-        x2="27.5"
-        y2="3.5"
-        stroke="rgba(37,99,235,0.6)"
-        strokeWidth="0.7"
-        strokeLinecap="round"
-      />
-      <line
-        x1="10.5"
-        y1="12"
-        x2="7.5"
-        y2="9"
-        stroke="rgba(37,99,235,0.4)"
-        strokeWidth="0.6"
-        strokeLinecap="round"
-      />
-      <line
-        x1="29.5"
-        y1="12"
-        x2="32.5"
-        y2="9"
-        stroke="rgba(37,99,235,0.4)"
-        strokeWidth="0.6"
-        strokeLinecap="round"
-      />
-
-      {/* face */}
-      <ellipse
-        cx="20"
-        cy="21"
-        rx="7.5"
-        ry="8"
-        fill="none"
-        stroke="rgba(59,130,246,0.32)"
-        strokeWidth="0.6"
-      />
-
-      {/* eyes */}
-      <circle
-        cx="17"
-        cy="19.5"
-        r="1.4"
-        fill="none"
-        stroke="rgba(59,130,246,0.7)"
-        strokeWidth="0.7"
-      />
-      <circle
-        cx="23"
-        cy="19.5"
-        r="1.4"
-        fill="none"
-        stroke="rgba(59,130,246,0.7)"
-        strokeWidth="0.7"
-      />
-      <circle cx="17" cy="19.5" r="0.45" fill="rgba(59,130,246,0.6)" />
-      <circle cx="23" cy="19.5" r="0.45" fill="rgba(59,130,246,0.6)" />
-
-      {/* nose */}
-      <path
-        d="M19 22.5 L20 23.5 L21 22.5"
-        fill="none"
-        stroke="rgba(59,130,246,0.5)"
-        strokeWidth="0.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-
-      {/* gold chin / beard */}
-      <path
-        d="M16.5 27.5 Q20 30 23.5 27.5"
-        fill="none"
-        stroke="rgba(201,168,76,0.65)"
-        strokeWidth="0.85"
-        strokeLinecap="round"
-      />
-      <path
-        d="M14 25 Q15.5 27 17 26"
-        fill="none"
-        stroke="rgba(201,168,76,0.32)"
-        strokeWidth="0.6"
-        strokeLinecap="round"
-      />
-      <path
-        d="M26 25 Q24.5 27 23 26"
-        fill="none"
-        stroke="rgba(201,168,76,0.32)"
-        strokeWidth="0.6"
-        strokeLinecap="round"
-      />
-    </svg>
+    />
   )
 }
 
@@ -346,7 +218,7 @@ export function Navbar({ onCartClick, onMenuClick, cartCount, isMenuOpen = false
             flexShrink: 0,
           }}
         >
-          <LionSigil />
+          <LionMark />
           <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1, gap: 3 }}>
             <span
               style={{
