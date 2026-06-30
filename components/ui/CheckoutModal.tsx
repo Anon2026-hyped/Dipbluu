@@ -123,8 +123,8 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         className="bg-black border border-border-blue rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto"
         style={{ animation: 'scale-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)' }}
       >
-        {/* Step indicator */}
-        <div className="flex gap-2 p-6 border-b border-border-default">
+        {/* Step indicator + close */}
+        <div className="flex items-center gap-3 p-6 border-b border-border-default">
           {[1, 2].map((i) => (
             <div
               key={i}
@@ -133,6 +133,17 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
               }`}
             />
           ))}
+          <button
+            type="button"
+            onClick={handleClose}
+            aria-label="Close checkout"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border border-white/10 text-white/45 transition-all duration-200 hover:border-blue-bright/40 hover:text-blue-bright"
+          >
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
+              <line x1="1" y1="1" x2="10" y2="10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+              <line x1="10" y1="1" x2="1" y2="10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+            </svg>
+          </button>
         </div>
 
         <div className="p-8">
