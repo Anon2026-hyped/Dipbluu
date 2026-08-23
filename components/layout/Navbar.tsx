@@ -276,7 +276,7 @@ export function Navbar({ onCartClick, onMenuClick, cartCount, isMenuOpen = false
               style={{
                 fontFamily: 'var(--font-barlow), sans-serif',
                 fontWeight: 400,
-                fontSize: 10,
+                fontSize: 12,
                 letterSpacing: '0.3em',
                 color: 'rgba(180,195,230,0.68)',
                 textDecoration: 'none',

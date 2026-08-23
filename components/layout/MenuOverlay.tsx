@@ -68,8 +68,24 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
           className="absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-sm border border-white/10 text-white/50 transition-all duration-300 hover:rotate-90 hover:border-blue-bright/40 hover:text-blue-bright"
         >
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-            <line x1="1" y1="1" x2="11" y2="11" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-            <line x1="11" y1="1" x2="1" y2="11" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+            <line
+              x1="1"
+              y1="1"
+              x2="11"
+              y2="11"
+              stroke="currentColor"
+              strokeWidth="1.3"
+              strokeLinecap="round"
+            />
+            <line
+              x1="11"
+              y1="1"
+              x2="1"
+              y2="11"
+              stroke="currentColor"
+              strokeWidth="1.3"
+              strokeLinecap="round"
+            />
           </svg>
         </button>
 

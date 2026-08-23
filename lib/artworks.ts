@@ -95,7 +95,7 @@ export const artworks: Artwork[] = [
     priceUsdCents: 80000,
     imageUrl: `${IMG}/IMG_1101(1).jpg`,
   },
-    {
+  {
     id: 'E-PADRE',
     slug: 'E-PADRE',
     title: 'E-PADRE',
@@ -142,7 +142,7 @@ export const artworks: Artwork[] = [
     imageUrl: `${IMG}/IMG_1678.jpeg`,
   },
   {
-      id: 'Timberland',
+    id: 'Timberland',
     slug: 'Timberland II',
     title: 'Timberland II',
     medium: 'Oil on Canvas',
