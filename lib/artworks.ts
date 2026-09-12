@@ -150,4 +150,13 @@ export const artworks: Artwork[] = [
     priceUsdCents: 25000,
     imageUrl: `${IMG}/IMG_1679.jpeg`,
   },
+    {
+    id: 'The Accuser',
+    slug: 'The Accuser',
+    title: 'The Accuser',
+    medium: 'Oil on Canvas',
+    edition: 'EDITION OF 111 · BLIND DROP',
+    priceUsdCents: 50000,
+    imageUrl: `${IMG}/IMG_2055.jpeg`,
+  },
 ]
