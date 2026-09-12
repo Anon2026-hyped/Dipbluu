@@ -28,9 +28,15 @@ export default async function AdminDashboard() {
       </div>
 
       {loadError && (
-        <p className="mb-6 text-red-400 text-xs">
-          {loadError} — check that SUPABASE_SERVICE_ROLE_KEY is set.
-        </p>
+        <div className="mb-6 rounded border border-amber-500/40 bg-amber-500/10 p-4">
+          <p className="font-barlow text-amber-200 text-xs uppercase tracking-[0.2em]">
+            Manual fulfillment mode
+          </p>
+          <p className="mt-2 font-barlow text-sm text-muted">
+            {loadError} The storefront is running without the database-backed admin layer. New orders
+            will be handled through payment webhooks and WhatsApp alerts instead.
+          </p>
+        </div>
       )}
 
       {!loadError && artworks.length === 0 && (

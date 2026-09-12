@@ -6,6 +6,15 @@ import { publicEnv } from '@/lib/env'
 import { formatUsd } from '@/lib/money'
 import type { InitResult, PaymentProviderId } from '@/lib/payments'
 import { currencyFor, getProvider, selectProvider } from '@/lib/payments'
+import {
+  createLocalOrder,
+  getLocalOrderByNumber,
+  getLocalOrderByPaymentRef,
+  getLocalOrderItemsSummary,
+  recordLocalPaymentInit,
+  recordLocalWebhookEvent,
+  updateLocalOrderStatus,
+} from '@/lib/localOrderStore'
 import type { CheckoutInput } from '@/lib/validation/checkout'
 import { getArtworks } from '@/server/repositories/artworks'
 import {
@@ -70,6 +79,19 @@ export async function startCheckout(
     idempotencyKey,
     items,
     shipping: input.shipping,
+  }).catch(() => {
+    return createLocalOrder({
+      orderNumber,
+      email: input.shipping.email,
+      currency,
+      subtotalMinor: amountMinor,
+      shippingMinor: 0,
+      totalMinor: amountMinor,
+      paymentProvider: provider.id,
+      idempotencyKey,
+      items,
+      shipping: input.shipping,
+    })
   })
 
   const init = await provider.initialize({
@@ -89,6 +111,14 @@ export async function startCheckout(
     providerRef: init.reference,
     amountMinor: order.total_minor,
     currency: order.currency,
+  }).catch(() => {
+    recordLocalPaymentInit({
+      orderId: order.id,
+      provider: provider.id,
+      providerRef: init.reference,
+      amountMinor: order.total_minor,
+      currency: order.currency,
+    })
   })
 
   return { orderNumber: order.order_number, init }
@@ -107,31 +137,40 @@ export async function handleProviderWebhook(
   const event = await provider.verifyWebhook(req)
   if (!event) return { ok: false, status: 400 } // invalid signature
 
-  const fresh = await recordWebhookEvent(event.provider, event.eventId, event)
+  const fresh = await recordWebhookEvent(event.provider, event.eventId, event).catch(() => {
+    return recordLocalWebhookEvent(event.provider, event.eventId, event)
+  })
   if (!fresh) return { ok: true, status: 200 } // already processed
 
-  const order = event.orderNumber
-    ? await getOrderByNumber(event.orderNumber)
-    : event.providerRef
-      ? await getOrderByPaymentRef(event.providerRef)
+  const orderNumber = event.orderNumber
+  const providerRef = event.providerRef
+
+  const order = orderNumber
+    ? await getOrderByNumber(orderNumber).catch(() => getLocalOrderByNumber(orderNumber))
+    : providerRef
+      ? await getOrderByPaymentRef(providerRef).catch(() => getLocalOrderByPaymentRef(providerRef))
       : null
 
   if (!order) return { ok: true, status: 200 } // unmatched — ack to stop retries
 
   if (event.status === 'confirmed' && order.status !== 'paid') {
-    await updateOrderStatus(order.id, 'paid', 'confirmed')
+    await updateOrderStatus(order.id, 'paid', 'confirmed').catch(() => {
+      updateLocalOrderStatus(order.id, 'paid', 'confirmed')
+    })
 
     const summary = {
       orderNumber: order.order_number,
       email: order.email,
       customerName: order.email.split('@')[0] ?? 'there',
       total: formatUsd(order.total_minor),
-      items: await getOrderItemsSummary(order.id),
+      items: await getOrderItemsSummary(order.id).catch(() => getLocalOrderItemsSummary(order.id)),
     }
     await sendOrderConfirmation(summary)
     await sendAdminNotification(summary)
   } else if (event.status === 'failed' || event.status === 'expired') {
-    await updateOrderStatus(order.id, 'failed', event.status === 'expired' ? 'expired' : 'failed')
+    await updateOrderStatus(order.id, 'failed', event.status === 'expired' ? 'expired' : 'failed').catch(() => {
+      updateLocalOrderStatus(order.id, 'failed', event.status === 'expired' ? 'expired' : 'failed')
+    })
   }
 
   return { ok: true, status: 200 }

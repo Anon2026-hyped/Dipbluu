@@ -1,18 +1,11 @@
 import { randomUUID } from 'node:crypto'
 import { NextResponse } from 'next/server'
-import { isSupabaseConfigured } from '@/lib/env'
 import { checkoutSchema } from '@/lib/validation/checkout'
 import { startCheckout } from '@/server/services/orderService'
 
 export const runtime = 'nodejs'
 
 export async function POST(req: Request) {
-  if (!isSupabaseConfigured) {
-    return NextResponse.json(
-      { error: 'Checkout is not configured. Set Supabase + payment env vars.' },
-      { status: 503 },
-    )
-  }
 
   let body: unknown
   try {
