@@ -1,7 +1,14 @@
 import 'server-only'
 
 import { Resend } from 'resend'
-import { adminNotificationEmail, emailFrom, hasResendConfigured, hasTwilioConfigured, resendApiKey, twilio } from '@/lib/env'
+import {
+  adminNotificationEmail,
+  emailFrom,
+  hasResendConfigured,
+  hasTwilioConfigured,
+  resendApiKey,
+  twilio,
+} from '@/lib/env'
 
 function client(): Resend | null {
   const key = resendApiKey
@@ -24,9 +31,7 @@ function itemsHtml(items: OrderEmailSummary['items']): string {
 }
 
 function whatsappBody(order: OrderEmailSummary): string {
-  const itemSummary = order.items
-    .map((item) => `${item.quantity} × ${item.title}`)
-    .join(', ')
+  const itemSummary = order.items.map((item) => `${item.quantity} × ${item.title}`).join(', ')
 
   return [
     `New BOANERGES order: ${order.orderNumber}`,
@@ -72,14 +77,17 @@ async function sendWhatsApp(body: string): Promise<void> {
     Body: body,
   })
 
-  const res = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Basic ${auth}`,
-      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+  const res = await fetch(
+    `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Basic ${auth}`,
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+      body: params.toString(),
     },
-    body: params.toString(),
-  })
+  )
 
   if (!res.ok) {
     const text = await res.text().catch(() => '')

@@ -28,14 +28,17 @@ export interface LocalCreateOrderInput {
 
 const orders = new Map<string, OrderRow>()
 const orderItems = new Map<string, Array<{ title_snapshot: string; quantity: number }>>()
-const payments = new Map<string, {
-  orderId: string
-  provider: PaymentProvider
-  providerRef: string
-  amountMinor: number
-  currency: string
-  status: PaymentStatus
-}>()
+const payments = new Map<
+  string,
+  {
+    orderId: string
+    provider: PaymentProvider
+    providerRef: string
+    amountMinor: number
+    currency: string
+    status: PaymentStatus
+  }
+>()
 const webhookIds = new Set<string>()
 
 const nowIso = () => new Date().toISOString()
@@ -64,10 +67,13 @@ function withLocalOrder(input: LocalCreateOrderInput): OrderRow {
   }
 
   orders.set(id, order)
-  orderItems.set(id, input.items.map((item) => ({
-    title_snapshot: item.titleSnapshot,
-    quantity: item.quantity,
-  })))
+  orderItems.set(
+    id,
+    input.items.map((item) => ({
+      title_snapshot: item.titleSnapshot,
+      quantity: item.quantity,
+    })),
+  )
 
   return order
 }
@@ -93,7 +99,7 @@ export function getLocalOrderById(orderId: string): OrderRow | null {
 
 export function getLocalOrderByPaymentRef(providerRef: string): OrderRow | null {
   const payment = Array.from(payments.values()).find((entry) => entry.providerRef === providerRef)
-  return payment ? orders.get(payment.orderId) ?? null : null
+  return payment ? (orders.get(payment.orderId) ?? null) : null
 }
 
 export function recordLocalPaymentInit(input: {
@@ -113,7 +119,9 @@ export function recordLocalPaymentInit(input: {
   })
 }
 
-export function getLocalOrderItemsSummary(orderId: string): Array<{ title: string; quantity: number }> {
+export function getLocalOrderItemsSummary(
+  orderId: string,
+): Array<{ title: string; quantity: number }> {
   return (orderItems.get(orderId) ?? []).map((row) => ({
     title: row.title_snapshot,
     quantity: row.quantity,

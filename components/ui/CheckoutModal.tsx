@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useCartStore } from '@/features/cart'
 import { useCheckout } from '@/features/checkout/useCheckout'
-import { track } from '@/lib/analytics'
 import { formatUsd } from '@/lib/money'
 import type { CheckoutInput } from '@/lib/validation/checkout'
 
@@ -52,7 +51,6 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
 
   const [step, setStep] = useState(1)
   const [deliveryType, setDeliveryType] = useState<DeliveryType>('standard')
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card')
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -92,7 +90,6 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         phone: formData.phone.trim() || undefined,
       },
     }
-    track('checkout_start', { delivery: deliveryType, method })
     await start(input)
     // Paystack redirects the browser away inside start().
   }
@@ -253,8 +250,11 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 PAYMENT
               </h2>
 
-              <div className="mb-6 rounded border border-border-default bg-panel p-4 text-xs text-muted" style={{ letterSpacing: '0.18em' }}>
-                PAY WITH PAYSTACK • CARD / BANK TRANSFER • NGN
+              <div
+                className="mb-6 rounded border border-border-default bg-panel p-4 text-xs text-muted"
+                style={{ letterSpacing: '0.18em' }}
+              >
+                PAY WITH PAYSTACK • CARD / BANK TRANSFER
               </div>
 
               {/* Order summary */}
@@ -297,8 +297,8 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 className="mb-4 text-xs text-muted"
                 style={{ fontSize: '9px', letterSpacing: '0.16em' }}
               >
-                You will be redirected to a secure Paystack checkout. Card details are never stored by
-                BOANERGES.
+                You will be redirected to a secure Paystack checkout. Card details are never stored
+                by BOANERGES.
               </p>
               <button
                 type="button"

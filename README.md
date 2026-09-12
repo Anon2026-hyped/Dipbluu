@@ -1,11 +1,10 @@
 # BOANERGES
 
-A cinematic, production-grade art-commerce platform for selling limited-edition prints.
-Customers browse a gallery and purchase prints shipped worldwide using Paystack and email
-notifications for order status updates.
+A lightweight, cinematic art-commerce storefront for selling limited-edition prints.
+Customers browse a gallery and purchase prints shipped worldwide using Paystack, with order
+confirmations by email and seller alerts by email + WhatsApp.
 
-Built with **Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS ·
-Supabase · Biome**.
+Built with **Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS · Biome**.
 
 ---
 
@@ -16,25 +15,26 @@ Supabase · Biome**.
 | Framework | Next.js 16 (App Router, Server Components + client islands) |
 | UI | React 19, Tailwind CSS 3, `next/font` (self-hosted), `next/image` |
 | State | Zustand 5 (cart) |
-| Data / Auth / Storage | Supabase (Postgres + RLS, magic-link auth, Storage) |
-| Payments | Paystack (NGN card payments) |
+| Catalog | Static seed data (`lib/artworks.ts`) |
+| Orders | In-memory store (`lib/localOrderStore.ts`) — no database required |
+| Payments | Paystack (NGN card payments; catalog priced in USD, converted at checkout) |
 | Email | Resend (order confirmation + admin notification) |
-| Validation | Zod (env, checkout, shipping, artwork) |
+| Alerts | WhatsApp via Twilio (optional, in addition to email) |
+| Validation | Zod (env, checkout, shipping) |
 | Tooling | Biome (lint + format), TypeScript strict, `noUncheckedIndexedAccess` |
-| Analytics | Cookieless Plausible (optional, DNT-aware) |
 
 ---
 
 ## Architecture
 
-Layered and domain-driven. UI never touches a payment SDK or the DB directly — it calls a
-feature hook or a server action, which calls `lib`/`server`.
+Layered and domain-driven. UI never touches a payment SDK directly — it calls a feature hook,
+which calls a server action/route, which calls `lib`/`server`.
 
 ```
 UI (Server / Client Components)
    → features/<domain>        domain logic, hooks, forms
-      → lib/ + server/        api clients, payments, email, repositories
-         → Supabase (Postgres + Auth + Storage) + payment providers
+      → lib/ + server/        payments, email, catalog + order repositories
+         → Paystack + Resend/Twilio
 ```
 
 Principles:
@@ -51,34 +51,31 @@ app/
   page.tsx                 home (Server Component) → HomeExperience client island
   gallery/                 catalog listing (ISR)
   art/[slug]/              artwork detail — generateMetadata + JSON-LD (SSG)
-  order/[orderNumber]/     DB-driven order status (auto-polls while pending)
-  admin/                   magic-link login + protected dashboard (route group)
+  order/[orderNumber]/     order status (auto-polls while pending)
+  admin/                   static "fulfillment is manual" pages (no auth, no dashboard)
   api/
     checkout/              idempotent order creation + payment start
+    orders/                order listing (local store)
     webhooks/paystack/
-  auth/callback/           magic-link code exchange
   sitemap.ts  robots.ts  layout.tsx  globals.css
 
-components/                presentational: layout/, sections/, ui/, analytics/, order/
-features/                  cart/ · checkout/ · home/ · catalog/ · admin/
+components/                presentational: layout/, sections/, ui/, order/
+features/                  cart/ · checkout/ · home/ · catalog/
 lib/
-  supabase/{client,server,admin}   browser / RSC / service-role clients
-  payments/{stripe,paystack,blockonomics,index}   provider abstraction + routing
-  email/  validation/  analytics/  money.ts  fonts.ts  env.ts  auth.ts  artworks.ts
+  payments/{paystack,fx,types,index}   provider abstraction + USD→NGN conversion
+  email/  validation/  localOrderStore.ts  money.ts  fonts.ts  env.ts  artworks.ts
 server/
-  repositories/            the only modules that touch the DB (artworks, orders, admin)
-  services/orderService    checkout + webhook orchestration
+  repositories/artworks.ts   reads the seed catalog
+  services/orderService.ts   checkout + webhook orchestration
 animations/                keyframes.css + motion tokens
-types/                     shared types + hand-written Supabase schema types
-supabase/                  SQL migrations + seed + setup guide
-proxy.ts                   session refresh + /admin allowlist gate (Next 16 proxy convention)
+types/                     shared types + order-store row shapes
 ```
 
 ### Payment routing
 
 | Delivery | Provider | Currency |
 |---|---|---|
-| All checkout flows | Paystack | NGN (kobo) |
+| All checkout flows | Paystack | NGN (kobo), converted from the USD catalog price |
 
 ---
 
@@ -90,9 +87,6 @@ cp .env.example .env.local        # fill in (see below)
 npm run dev                        # http://localhost:3000
 ```
 
-The app **runs without any backend configured** — the catalog falls back to seed data
-(`lib/artworks.ts`) and checkout remains available with the local fallback flow when keys are missing.
-
 ### Scripts
 
 | Script | Purpose |
@@ -103,22 +97,19 @@ The app **runs without any backend configured** — the catalog falls back to se
 | `npm run lint` / `npm run lint:fix` | Biome check / autofix |
 | `npm run format` | Biome format |
 
-### Going live (Supabase + payments)
+### Going live
 
-1. Create a Supabase project; apply `supabase/migrations/0001_init.sql` + `supabase/seed.sql`
-   and create a public Storage bucket named `artworks` (see `supabase/README.md`).
-2. Fill Supabase, Paystack, and Resend keys in `.env.local`.
+1. Fill Paystack, Resend, and (optionally) Twilio keys in `.env.local`.
+2. Set `USD_NGN_RATE` to the current USD→NGN rate used to convert catalog prices at checkout.
 3. Register the Paystack webhook endpoint:
    - Paystack → `/api/webhooks/paystack`
-4. Set `ADMIN_ALLOWLIST_EMAILS` and sign in at `/admin/login` (magic link).
 
 ---
 
 ## Environment variables
 
 See [`.env.example`](./.env.example) for the full, documented list. `NEXT_PUBLIC_*` are
-browser-exposed; everything else is server-only. Missing/placeholder values degrade gracefully
-(seed data, disabled features) rather than crashing.
+browser-exposed; everything else is server-only.
 
 > Security: never commit `.env.local`. If a secret is ever committed, rotate it — removing it
 > from the working tree does not remove it from git history.
@@ -129,5 +120,6 @@ browser-exposed; everything else is server-only. Missing/placeholder values degr
 
 - Run `npm run lint` and `npm run typecheck` before committing — both must be clean (Biome is
   configured with accessibility rules at `error`).
-- Add new domain logic under `features/` and DB access under `server/repositories/`.
+- Add new domain logic under `features/` and catalog/order access under `server/repositories/`
+  and `server/services/`.
 - Keep money in minor units; format with `lib/money.ts`.

@@ -2,8 +2,7 @@ import type { Artwork } from '@/types'
 
 const IMG = 'https://raw.githubusercontent.com/Anon2026-hyped/Boanerges/main'
 
-// Seed catalog. In Phase 3 this moves to Supabase; the shape stays identical
-// (integer minor units: USD cents), so consumers won't change.
+// Static catalog (integer minor units: USD cents).
 export const artworks: Artwork[] = [
   {
     id: 'herald',
@@ -150,7 +149,7 @@ export const artworks: Artwork[] = [
     priceUsdCents: 25000,
     imageUrl: `${IMG}/IMG_1679.jpeg`,
   },
-    {
+  {
     id: 'The Accuser',
     slug: 'The Accuser',
     title: 'The Accuser',

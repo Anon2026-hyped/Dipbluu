@@ -14,7 +14,7 @@ export function getProvider(id: PaymentProviderId): PaymentProvider {
   return registry[id]
 }
 
-/** This storefront uses Paystack in NGN. */
+/** This storefront uses Paystack for the simplest minimal checkout flow. */
 export function selectProvider(
   _deliveryType: DeliveryType,
   _method: PaymentMethod,
@@ -22,9 +22,10 @@ export function selectProvider(
   return paystackProvider
 }
 
-/** This storefront uses Paystack in NGN for the simplest minimal checkout flow. */
-export function currencyFor(_id: PaymentProviderId): Currency {
+/** Catalog prices are USD; Paystack always charges in NGN (see `fx.ts` for the conversion). */
+export function chargeCurrencyFor(_id: PaymentProviderId): Currency {
   return 'NGN'
 }
 
+export { usdCentsToNgnKobo } from './fx'
 export type { Currency, InitResult, PaymentProvider, PaymentProviderId } from './types'

@@ -3,9 +3,6 @@ import 'server-only'
 import { randomUUID } from 'node:crypto'
 import { sendAdminNotification, sendOrderConfirmation } from '@/lib/email'
 import { publicEnv } from '@/lib/env'
-import { formatUsd } from '@/lib/money'
-import type { InitResult, PaymentProviderId } from '@/lib/payments'
-import { currencyFor, getProvider, selectProvider } from '@/lib/payments'
 import {
   createLocalOrder,
   getLocalOrderByNumber,
@@ -15,17 +12,11 @@ import {
   recordLocalWebhookEvent,
   updateLocalOrderStatus,
 } from '@/lib/localOrderStore'
+import { formatUsd } from '@/lib/money'
+import type { InitResult, PaymentProviderId } from '@/lib/payments'
+import { chargeCurrencyFor, getProvider, selectProvider, usdCentsToNgnKobo } from '@/lib/payments'
 import type { CheckoutInput } from '@/lib/validation/checkout'
 import { getArtworks } from '@/server/repositories/artworks'
-import {
-  createOrder,
-  getOrderByNumber,
-  getOrderByPaymentRef,
-  getOrderItemsSummary,
-  recordPaymentInit,
-  recordWebhookEvent,
-  updateOrderStatus,
-} from '@/server/repositories/orders'
 
 function newOrderNumber(): string {
   return `BNG-${randomUUID().slice(0, 8).toUpperCase()}`
@@ -49,7 +40,10 @@ export async function startCheckout(
   const byId = new Map(catalog.map((a) => [a.id, a]))
 
   const provider = selectProvider(input.deliveryType, input.paymentMethod)
-  const currency = currencyFor(provider.id)
+
+  // Orders are recorded and displayed in USD (the catalog's pricing currency);
+  // the actual Paystack charge is converted to NGN separately, below.
+  const currency = 'USD'
 
   let amountMinor = 0
   const items = input.items.map((item) => {
@@ -67,58 +61,40 @@ export async function startCheckout(
   })
 
   const orderNumber = newOrderNumber()
-  const order = await createOrder({
+  const order = createLocalOrder({
     orderNumber,
     email: input.shipping.email,
     currency,
     subtotalMinor: amountMinor,
     shippingMinor: 0,
     totalMinor: amountMinor,
-
     paymentProvider: provider.id,
     idempotencyKey,
     items,
     shipping: input.shipping,
-  }).catch(() => {
-    return createLocalOrder({
-      orderNumber,
-      email: input.shipping.email,
-      currency,
-      subtotalMinor: amountMinor,
-      shippingMinor: 0,
-      totalMinor: amountMinor,
-      paymentProvider: provider.id,
-      idempotencyKey,
-      items,
-      shipping: input.shipping,
-    })
   })
+
+  const chargeCurrency = chargeCurrencyFor(provider.id)
+  const chargeAmountMinor =
+    chargeCurrency === 'NGN' ? usdCentsToNgnKobo(order.total_minor) : order.total_minor
 
   const init = await provider.initialize({
     orderId: order.id,
     orderNumber: order.order_number,
     email: order.email,
-    amountMinor: order.total_minor,
-    currency,
+    amountMinor: chargeAmountMinor,
+    currency: chargeCurrency,
     description: `BOANERGES order ${order.order_number}`,
     successUrl: `${publicEnv.siteUrl}/order/${order.order_number}`,
     cancelUrl: `${publicEnv.siteUrl}/checkout?canceled=1`,
   })
 
-  await recordPaymentInit({
+  recordLocalPaymentInit({
     orderId: order.id,
     provider: provider.id,
     providerRef: init.reference,
-    amountMinor: order.total_minor,
-    currency: order.currency,
-  }).catch(() => {
-    recordLocalPaymentInit({
-      orderId: order.id,
-      provider: provider.id,
-      providerRef: init.reference,
-      amountMinor: order.total_minor,
-      currency: order.currency,
-    })
+    amountMinor: chargeAmountMinor,
+    currency: chargeCurrency,
   })
 
   return { orderNumber: order.order_number, init }
@@ -127,7 +103,7 @@ export async function startCheckout(
 /**
  * Verifies and processes a provider webhook. The webhook — not the client
  * redirect — is the source of truth for payment status. Idempotent: duplicate
- * deliveries are deduped via webhook_events.
+ * deliveries are deduped via an in-memory webhook-id set.
  */
 export async function handleProviderWebhook(
   providerId: PaymentProviderId,
@@ -137,40 +113,34 @@ export async function handleProviderWebhook(
   const event = await provider.verifyWebhook(req)
   if (!event) return { ok: false, status: 400 } // invalid signature
 
-  const fresh = await recordWebhookEvent(event.provider, event.eventId, event).catch(() => {
-    return recordLocalWebhookEvent(event.provider, event.eventId, event)
-  })
+  const fresh = recordLocalWebhookEvent(event.provider, event.eventId, event)
   if (!fresh) return { ok: true, status: 200 } // already processed
 
   const orderNumber = event.orderNumber
   const providerRef = event.providerRef
 
   const order = orderNumber
-    ? await getOrderByNumber(orderNumber).catch(() => getLocalOrderByNumber(orderNumber))
+    ? getLocalOrderByNumber(orderNumber)
     : providerRef
-      ? await getOrderByPaymentRef(providerRef).catch(() => getLocalOrderByPaymentRef(providerRef))
+      ? getLocalOrderByPaymentRef(providerRef)
       : null
 
   if (!order) return { ok: true, status: 200 } // unmatched — ack to stop retries
 
   if (event.status === 'confirmed' && order.status !== 'paid') {
-    await updateOrderStatus(order.id, 'paid', 'confirmed').catch(() => {
-      updateLocalOrderStatus(order.id, 'paid', 'confirmed')
-    })
+    updateLocalOrderStatus(order.id, 'paid', 'confirmed')
 
     const summary = {
       orderNumber: order.order_number,
       email: order.email,
       customerName: order.email.split('@')[0] ?? 'there',
       total: formatUsd(order.total_minor),
-      items: await getOrderItemsSummary(order.id).catch(() => getLocalOrderItemsSummary(order.id)),
+      items: getLocalOrderItemsSummary(order.id),
     }
     await sendOrderConfirmation(summary)
     await sendAdminNotification(summary)
   } else if (event.status === 'failed' || event.status === 'expired') {
-    await updateOrderStatus(order.id, 'failed', event.status === 'expired' ? 'expired' : 'failed').catch(() => {
-      updateLocalOrderStatus(order.id, 'failed', event.status === 'expired' ? 'expired' : 'failed')
-    })
+    updateLocalOrderStatus(order.id, 'failed', event.status === 'expired' ? 'expired' : 'failed')
   }
 
   return { ok: true, status: 200 }

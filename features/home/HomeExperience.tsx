@@ -12,7 +12,6 @@ import { Hero } from '@/components/sections/Hero'
 import { HowItWorks } from '@/components/sections/HowItWorks'
 import { Marquee } from '@/components/sections/Marquee'
 import { QuoteBlock } from '@/components/sections/QuoteBlock'
-import { AmbientSound } from '@/components/ui/AmbientSound'
 import { CartDrawer } from '@/components/ui/CartDrawer'
 import { CheckoutModal } from '@/components/ui/CheckoutModal'
 import { Cursor } from '@/components/ui/Cursor'
@@ -91,8 +90,6 @@ export function HomeExperience({ artworks }: { artworks: Artwork[] }) {
 
         <Footer />
       </div>
-
-      <AmbientSound />
     </>
   )
 }

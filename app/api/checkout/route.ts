@@ -6,7 +6,6 @@ import { startCheckout } from '@/server/services/orderService'
 export const runtime = 'nodejs'
 
 export async function POST(req: Request) {
-
   let body: unknown
   try {
     body = await req.json()

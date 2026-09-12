@@ -1,9 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { OrderStatusPoller } from '@/components/order/OrderStatusPoller'
-import { isSupabaseConfigured } from '@/lib/env'
+import { getLocalOrderByNumber } from '@/lib/localOrderStore'
 import { formatUsd } from '@/lib/money'
-import { getOrderByNumber } from '@/server/repositories/orders'
 import type { OrderStatus } from '@/types/database'
 
 export const metadata: Metadata = {
@@ -28,7 +27,7 @@ const STATUS_COPY: Record<OrderStatus, { label: string; note: string }> = {
 
 export default async function OrderPage({ params }: { params: Promise<{ orderNumber: string }> }) {
   const { orderNumber } = await params
-  const order = isSupabaseConfigured ? await getOrderByNumber(orderNumber) : null
+  const order = getLocalOrderByNumber(orderNumber)
 
   const status = order?.status ?? 'pending_payment'
   const copy = STATUS_COPY[status]

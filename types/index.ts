@@ -9,7 +9,7 @@ export interface Artwork {
   /** Price in USD minor units (cents). e.g. 200000 = $2,000.00 */
   priceUsdCents: number
   description?: string
-  /** Public URL of the primary image (Supabase Storage), when available. */
+  /** Public URL of the primary image, when available. */
   imageUrl?: string
   /** Blurhash placeholder for the primary image, when available. */
   blurhash?: string
