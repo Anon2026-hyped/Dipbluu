@@ -61,7 +61,6 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     address: '',
   })
 
-  const isInternational = deliveryType === 'international'
   const total = formatUsd(subtotalUsdCents())
 
   const handleInputChange = (
@@ -81,7 +80,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   }
 
   const handlePay = async () => {
-    const method: PaymentMethod = isInternational ? paymentMethod : 'card'
+    const method: PaymentMethod = 'card'
     const input: CheckoutInput = {
       items: items.map((item) => ({ artworkId: item.artwork.id, quantity: item.quantity })),
       deliveryType,
@@ -254,26 +253,9 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 PAYMENT
               </h2>
 
-              {/* Method tabs — crypto only offered for international orders */}
-              {isInternational && (
-                <div className="flex gap-2 mb-8">
-                  {(['card', 'crypto'] as const).map((method) => (
-                    <button
-                      type="button"
-                      key={method}
-                      onClick={() => setPaymentMethod(method)}
-                      className={`flex-1 py-3 px-4 border transition-all font-barlow ${
-                        paymentMethod === method
-                          ? 'border-blue-bright bg-blue-glow-soft'
-                          : 'border-border-default'
-                      }`}
-                      style={{ fontSize: '11px', letterSpacing: '0.2em' }}
-                    >
-                      {method === 'card' ? '💳 CARD' : '₿ BITCOIN'}
-                    </button>
-                  ))}
-                </div>
-              )}
+              <div className="mb-6 rounded border border-border-default bg-panel p-4 text-xs text-muted" style={{ letterSpacing: '0.18em' }}>
+                PAY WITH PAYSTACK • CARD / BANK TRANSFER • NGN
+              </div>
 
               {/* Order summary */}
               <div className="border border-border-default p-4 mb-6">

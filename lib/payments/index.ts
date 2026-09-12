@@ -25,14 +25,14 @@ export function getProvider(id: PaymentProviderId): PaymentProvider {
  */
 export function selectProvider(
   _deliveryType: DeliveryType,
-  method: PaymentMethod,
+  _method: PaymentMethod,
 ): PaymentProvider {
-  return method === 'crypto' ? blockonomicsProvider : stripeProvider
+  return paystackProvider
 }
 
-/** All providers charge in USD. */
+/** This storefront uses Paystack in NGN for the simplest minimal checkout flow. */
 export function currencyFor(_id: PaymentProviderId): Currency {
-  return 'USD'
+  return 'NGN'
 }
 
 export type { Currency, InitResult, PaymentProvider, PaymentProviderId } from './types'
