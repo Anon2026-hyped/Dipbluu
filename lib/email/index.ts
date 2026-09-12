@@ -1,14 +1,15 @@
 import 'server-only'
 
 import { Resend } from 'resend'
+import { adminNotificationEmail, emailFrom, hasResendConfigured, hasTwilioConfigured, resendApiKey, twilio } from '@/lib/env'
 
 function client(): Resend | null {
-  const key = process.env.RESEND_API_KEY
+  const key = resendApiKey
   if (!key) return null
   return new Resend(key)
 }
 
-const from = () => process.env.EMAIL_FROM ?? 'BOANERGES <orders@example.com>'
+const from = () => emailFrom
 
 export interface OrderEmailSummary {
   orderNumber: string
@@ -37,29 +38,37 @@ function whatsappBody(order: OrderEmailSummary): string {
 }
 
 async function send(to: string, subject: string, html: string): Promise<void> {
+  if (!hasResendConfigured) {
+    console.warn(`[email] RESEND_API_KEY not set — skipping "${subject}" to ${to}`)
+    return
+  }
+
   const resend = client()
   if (!resend) {
     console.warn(`[email] RESEND_API_KEY not set — skipping "${subject}" to ${to}`)
     return
   }
+
   const { error } = await resend.emails.send({ from: from(), to, subject, html })
-  if (error) console.error(`[email] failed to send "${subject}":`, error)
+  if (error) {
+    console.error(`[email] failed to send "${subject}" to ${to}: ${error.message}`)
+  }
 }
 
 async function sendWhatsApp(body: string): Promise<void> {
-  const accountSid = process.env.TWILIO_ACCOUNT_SID
-  const authToken = process.env.TWILIO_AUTH_TOKEN
-  const from = process.env.TWILIO_WHATSAPP_FROM
-  const to = process.env.TWILIO_WHATSAPP_TO
-
-  if (!accountSid || !authToken || !from || !to) {
+  if (!hasTwilioConfigured) {
     return
   }
 
+  const accountSid = twilio.accountSid as string
+  const authToken = twilio.authToken as string
+  const whatsappFrom = twilio.whatsappFrom as string
+  const whatsappTo = twilio.whatsappTo as string
+
   const auth = Buffer.from(`${accountSid}:${authToken}`).toString('base64')
   const params = new URLSearchParams({
-    From: from,
-    To: to,
+    From: whatsappFrom,
+    To: whatsappTo,
     Body: body,
   })
 
@@ -74,7 +83,7 @@ async function sendWhatsApp(body: string): Promise<void> {
 
   if (!res.ok) {
     const text = await res.text().catch(() => '')
-    console.error('[whatsapp] Twilio message failed:', text || res.statusText)
+    throw new Error(`[whatsapp] Twilio message failed: ${text || res.statusText}`)
   }
 }
 
@@ -93,10 +102,9 @@ export async function sendOrderConfirmation(order: OrderEmailSummary): Promise<v
 
 /** Sent to the admin inbox on each newly paid order, plus WhatsApp if configured. */
 export async function sendAdminNotification(order: OrderEmailSummary): Promise<void> {
-  const to = process.env.EMAIL_ADMIN_TO
-  if (to) {
+  if (adminNotificationEmail) {
     await send(
-      to,
+      adminNotificationEmail,
       `New paid order ${order.orderNumber}`,
       `<h2>New order ${order.orderNumber}</h2>
        <p>${order.customerName} (${order.email}) — ${order.total}</p>

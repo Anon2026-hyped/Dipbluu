@@ -17,7 +17,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'WHAT PAYMENT METHODS ARE ACCEPTED?',
-    a: 'We accept card payments via Stripe (USD), as well as cryptocurrency payments including Bitcoin, Ethereum, and USDT. Select your preferred method at checkout.',
+    a: 'We accept card payments via Paystack. The checkout is secure, fast, and designed for a simple, reliable purchase flow.',
   },
   {
     q: 'HOW DO I COLLECT MY PIECE?',

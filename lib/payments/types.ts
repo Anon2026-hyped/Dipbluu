@@ -1,4 +1,4 @@
-export type PaymentProviderId = 'stripe' | 'blockonomics' | 'paystack'
+export type PaymentProviderId = 'paystack'
 
 export type Currency = 'USD' | 'NGN'
 
@@ -17,16 +17,12 @@ export interface PaymentContext {
 }
 
 /** What the client needs to continue payment after order creation. */
-export type InitResult =
-  | { kind: 'redirect'; provider: PaymentProviderId; url: string; reference: string }
-  | {
-      kind: 'crypto'
-      provider: PaymentProviderId
-      address: string
-      amountBtc: string
-      reference: string
-      expiresAt: string
-    }
+export type InitResult = {
+  kind: 'redirect'
+  provider: PaymentProviderId
+  url: string
+  reference: string
+}
 
 export type NormalizedStatus = 'confirmed' | 'failed' | 'pending' | 'expired'
 
@@ -47,7 +43,7 @@ export interface NormalizedWebhookEvent {
 
 export interface PaymentProvider {
   id: PaymentProviderId
-  /** Start a payment; returns a redirect URL or crypto address. */
+  /** Start a payment; returns a redirect URL for the checkout flow. */
   initialize(ctx: PaymentContext): Promise<InitResult>
   /**
    * Verify + parse an incoming webhook Request. Returns null if the signature

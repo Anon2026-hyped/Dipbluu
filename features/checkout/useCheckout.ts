@@ -7,8 +7,6 @@ import type { CheckoutInput } from '@/lib/validation/checkout'
 interface CheckoutState {
   loading: boolean
   error: string | null
-  /** Populated when the chosen provider is crypto (show address + amount). */
-  crypto: Extract<InitResult, { kind: 'crypto' }> | null
   /** Set once an order is created (used to link to the status page). */
   orderNumber: string | null
 }
@@ -16,19 +14,18 @@ interface CheckoutState {
 /**
  * Drives the checkout API. Generates a stable Idempotency-Key per attempt so
  * retries (double-clicks, network retries) never create duplicate orders.
- * Redirect providers (Stripe/Paystack) navigate away; crypto returns details.
+ * Paystack redirects the browser away to complete the payment.
  */
 export function useCheckout() {
   const [state, setState] = useState<CheckoutState>({
     loading: false,
     error: null,
-    crypto: null,
     orderNumber: null,
   })
   const idempotencyKey = useRef<string>(crypto.randomUUID())
 
   const start = useCallback(async (input: CheckoutInput) => {
-    setState({ loading: true, error: null, crypto: null, orderNumber: null })
+    setState({ loading: true, error: null, orderNumber: null })
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
@@ -44,7 +41,6 @@ export function useCheckout() {
         setState({
           loading: false,
           error: data?.error ?? 'Checkout failed.',
-          crypto: null,
           orderNumber: null,
         })
         return
@@ -58,14 +54,12 @@ export function useCheckout() {
       setState({
         loading: false,
         error: null,
-        crypto: result.init,
         orderNumber: result.orderNumber,
       })
     } catch {
       setState({
         loading: false,
         error: 'Network error. Please try again.',
-        crypto: null,
         orderNumber: null,
       })
     }
@@ -74,7 +68,7 @@ export function useCheckout() {
   /** Reset the idempotency key to begin a genuinely new order. */
   const reset = useCallback(() => {
     idempotencyKey.current = crypto.randomUUID()
-    setState({ loading: false, error: null, crypto: null, orderNumber: null })
+    setState({ loading: false, error: null, orderNumber: null })
   }, [])
 
   return { ...state, start, reset }

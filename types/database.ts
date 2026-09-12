@@ -16,7 +16,7 @@ export type OrderStatus =
   | 'failed'
   | 'cancelled'
   | 'refunded'
-export type PaymentProvider = 'stripe' | 'blockonomics' | 'paystack'
+export type PaymentProvider = 'paystack'
 export type PaymentStatus = 'pending' | 'confirmed' | 'failed' | 'expired'
 export type DeliveryType = 'standard' | 'international'
 

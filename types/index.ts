@@ -22,7 +22,7 @@ export interface CartItem {
 }
 
 export type DeliveryType = 'standard' | 'international'
-export type PaymentMethod = 'card' | 'crypto'
+export type PaymentMethod = 'card'
 export type OrderStatus = 'pending' | 'completed' | 'failed'
 
 export interface Order {

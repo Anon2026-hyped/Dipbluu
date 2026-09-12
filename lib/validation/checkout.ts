@@ -18,7 +18,7 @@ export const checkoutItemSchema = z.object({
 export const checkoutSchema = z.object({
   items: z.array(checkoutItemSchema).min(1, 'Cart is empty'),
   deliveryType: z.enum(['standard', 'international']),
-  paymentMethod: z.enum(['card', 'crypto']),
+  paymentMethod: z.enum(['card']),
   shipping: shippingSchema,
 })
 

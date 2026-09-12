@@ -13,7 +13,7 @@ interface CheckoutModalProps {
 }
 
 type DeliveryType = 'standard' | 'international'
-type PaymentMethod = 'card' | 'crypto'
+type PaymentMethod = 'card'
 
 export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null)
@@ -48,7 +48,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   }, [isOpen, onClose])
 
   const { items, clearCart, subtotalUsdCents } = useCartStore()
-  const { loading, error, crypto, orderNumber, start, reset } = useCheckout()
+  const { loading, error, orderNumber, start, reset } = useCheckout()
 
   const [step, setStep] = useState(1)
   const [deliveryType, setDeliveryType] = useState<DeliveryType>('standard')
@@ -94,7 +94,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     }
     track('checkout_start', { delivery: deliveryType, method })
     await start(input)
-    // Redirect providers navigate away inside start(); crypto returns details.
+    // Paystack redirects the browser away inside start().
   }
 
   const handleClose = () => {
@@ -293,64 +293,31 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 </p>
               )}
 
-              {/* Crypto: show the live BTC address once the order is created */}
-              {crypto ? (
-                <div className="space-y-4">
-                  <div className="bg-panel p-4 rounded">
-                    <p className="text-xs text-muted mb-2" style={{ letterSpacing: '0.16em' }}>
-                      SEND EXACTLY
-                    </p>
-                    <p className="font-bebas text-gold text-xl mb-3">{crypto.amountBtc} BTC</p>
-                    <p className="text-xs text-muted mb-1" style={{ letterSpacing: '0.16em' }}>
-                      TO ADDRESS
-                    </p>
-                    <div className="font-mono text-xs text-white/70 break-all mb-3">
-                      {crypto.address}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => navigator.clipboard.writeText(crypto.address)}
-                      className="text-blue-bright text-xs hover:text-blue-dim transition-colors"
-                      style={{ letterSpacing: '0.2em' }}
-                    >
-                      COPY ADDRESS
-                    </button>
-                  </div>
-                  <p
-                    className="text-xs text-muted"
-                    style={{ fontSize: '9px', letterSpacing: '0.16em' }}
-                  >
-                    Payment confirms automatically after network confirmations.
-                  </p>
-                  {orderNumber && (
-                    <a
-                      href={`/order/${orderNumber}`}
-                      className="block w-full text-center bg-blue-primary hover:bg-blue-bright text-white py-3 font-barlow"
-                      style={{ fontSize: '11px', letterSpacing: '0.22em' }}
-                    >
-                      VIEW ORDER STATUS →
-                    </a>
-                  )}
-                </div>
-              ) : (
-                <>
-                  <p
-                    className="mb-4 text-xs text-muted"
-                    style={{ fontSize: '9px', letterSpacing: '0.16em' }}
-                  >
-                    You'll be redirected to a secure checkout. Card details are never stored by
-                    BOANERGES.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={handlePay}
-                    disabled={loading || items.length === 0}
-                    className="w-full bg-blue-primary hover:bg-blue-bright disabled:opacity-40 disabled:cursor-not-allowed text-white py-3 font-barlow"
-                    style={{ fontSize: '11px', letterSpacing: '0.22em' }}
-                  >
-                    {loading ? 'PROCESSING…' : `PAY ${total} →`}
-                  </button>
-                </>
+              <p
+                className="mb-4 text-xs text-muted"
+                style={{ fontSize: '9px', letterSpacing: '0.16em' }}
+              >
+                You will be redirected to a secure Paystack checkout. Card details are never stored by
+                BOANERGES.
+              </p>
+              <button
+                type="button"
+                onClick={handlePay}
+                disabled={loading || items.length === 0}
+                className="w-full bg-blue-primary hover:bg-blue-bright disabled:opacity-40 disabled:cursor-not-allowed text-white py-3 font-barlow"
+                style={{ fontSize: '11px', letterSpacing: '0.22em' }}
+              >
+                {loading ? 'PROCESSING…' : `PAY ${total} →`}
+              </button>
+
+              {orderNumber && (
+                <a
+                  href={`/order/${orderNumber}`}
+                  className="mt-4 block w-full text-center bg-blue-primary hover:bg-blue-bright text-white py-3 font-barlow"
+                  style={{ fontSize: '11px', letterSpacing: '0.22em' }}
+                >
+                  VIEW ORDER STATUS →
+                </a>
               )}
 
               <button

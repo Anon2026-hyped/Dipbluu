@@ -33,7 +33,7 @@ export function HowItWorks() {
     { number: '10', label: 'DAYS TO SHIP', color: 'text-blue-bright' },
     { number: '100%', label: 'HAND SIGNED', color: 'text-gold' },
     { number: '1/111', label: 'NUMBERED', color: 'text-white' },
-    { number: 'USD', label: '+ CRYPTO', color: 'text-blue-bright' },
+    { number: 'NGN', label: '+ CARD', color: 'text-blue-bright' },
   ]
 
   return (

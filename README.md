@@ -1,8 +1,8 @@
 # BOANERGES
 
 A cinematic, production-grade art-commerce platform for selling limited-edition prints.
-Admins upload and manage artworks; customers browse an immersive gallery and purchase prints
-shipped worldwide, paying by card (Stripe/Paystack) or Bitcoin (Blockonomics).
+Customers browse a gallery and purchase prints shipped worldwide using Paystack and email
+notifications for order status updates.
 
 Built with **Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS ·
 Supabase · Biome**.
@@ -17,7 +17,7 @@ Supabase · Biome**.
 | UI | React 19, Tailwind CSS 3, `next/font` (self-hosted), `next/image` |
 | State | Zustand 5 (cart) |
 | Data / Auth / Storage | Supabase (Postgres + RLS, magic-link auth, Storage) |
-| Payments | Stripe (USD card), Blockonomics (BTC), Paystack (NGN) — one abstraction |
+| Payments | Paystack (NGN card payments) |
 | Email | Resend (order confirmation + admin notification) |
 | Validation | Zod (env, checkout, shipping, artwork) |
 | Tooling | Biome (lint + format), TypeScript strict, `noUncheckedIndexedAccess` |
@@ -55,7 +55,7 @@ app/
   admin/                   magic-link login + protected dashboard (route group)
   api/
     checkout/              idempotent order creation + payment start
-    webhooks/{stripe,paystack,blockonomics}/
+    webhooks/paystack/
   auth/callback/           magic-link code exchange
   sitemap.ts  robots.ts  layout.tsx  globals.css
 
@@ -78,9 +78,7 @@ proxy.ts                   session refresh + /admin allowlist gate (Next 16 prox
 
 | Delivery | Provider | Currency |
 |---|---|---|
-| Lagos / Nigeria | Paystack | NGN (kobo) |
-| International — card | Stripe | USD (cents) |
-| International — crypto | Blockonomics | BTC (priced in USD) |
+| All checkout flows | Paystack | NGN (kobo) |
 
 ---
 
@@ -93,7 +91,7 @@ npm run dev                        # http://localhost:3000
 ```
 
 The app **runs without any backend configured** — the catalog falls back to seed data
-(`lib/artworks.ts`) and checkout/admin are gated off until Supabase + keys are set.
+(`lib/artworks.ts`) and checkout remains available with the local fallback flow when keys are missing.
 
 ### Scripts
 
@@ -109,11 +107,9 @@ The app **runs without any backend configured** — the catalog falls back to se
 
 1. Create a Supabase project; apply `supabase/migrations/0001_init.sql` + `supabase/seed.sql`
    and create a public Storage bucket named `artworks` (see `supabase/README.md`).
-2. Fill Supabase, Stripe, Blockonomics, Paystack, and Resend keys in `.env.local`.
-3. Register webhook endpoints:
-   - Stripe → `/api/webhooks/stripe`
+2. Fill Supabase, Paystack, and Resend keys in `.env.local`.
+3. Register the Paystack webhook endpoint:
    - Paystack → `/api/webhooks/paystack`
-   - Blockonomics → `/api/webhooks/blockonomics?secret=<BLOCKONOMICS_CALLBACK_SECRET>`
 4. Set `ADMIN_ALLOWLIST_EMAILS` and sign in at `/admin/login` (magic link).
 
 ---
