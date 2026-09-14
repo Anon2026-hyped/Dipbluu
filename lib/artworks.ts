@@ -96,7 +96,7 @@ export const artworks: Artwork[] = [
   },
   {
     id: 'E-PADRE',
-    slug: 'E-PADRE',
+    slug: 'e-padre',
     title: 'E-PADRE',
     medium: 'Oil on Canvas',
     edition: 'EDITION OF 111 · BLIND DROP',
@@ -105,7 +105,7 @@ export const artworks: Artwork[] = [
   },
   {
     id: 'State-of-Mind',
-    slug: 'State-of-Mind',
+    slug: 'state-of-mind',
     title: 'State-of-Mind',
     medium: 'Oil on Canvas',
     edition: 'EDITION OF 111 · BLIND DROP',
@@ -114,7 +114,7 @@ export const artworks: Artwork[] = [
   },
   {
     id: 'Heartbreak',
-    slug: 'Heart-Break-Kid',
+    slug: 'heart-break-kid',
     title: 'Heart-Break-Kid',
     medium: 'Oil on Canvas',
     edition: 'EDITION OF 111 · BLIND DROP',
@@ -123,7 +123,7 @@ export const artworks: Artwork[] = [
   },
   {
     id: 'Scenery',
-    slug: 'Scenery',
+    slug: 'scenery',
     title: 'Scenery',
     medium: 'Oil on Canvas',
     edition: 'EDITION OF 111 · BLIND DROP',
@@ -133,7 +133,7 @@ export const artworks: Artwork[] = [
 
   {
     id: 'Timberland',
-    slug: 'Timberland',
+    slug: 'timberland',
     title: 'Timberland',
     medium: 'Oil on Canvas',
     edition: 'EDITION OF 111 · BLIND DROP',
@@ -142,7 +142,7 @@ export const artworks: Artwork[] = [
   },
   {
     id: 'Timberland',
-    slug: 'Timberland II',
+    slug: 'timberland-ii',
     title: 'Timberland II',
     medium: 'Oil on Canvas',
     edition: 'EDITION OF 111 · BLIND DROP',
@@ -151,7 +151,7 @@ export const artworks: Artwork[] = [
   },
   {
     id: 'The Accuser',
-    slug: 'The Accuser',
+    slug: 'the-accuser',
     title: 'The Accuser',
     medium: 'Oil on Canvas',
     edition: 'EDITION OF 111 · BLIND DROP',
