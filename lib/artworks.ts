@@ -33,8 +33,8 @@ export const artworks: Artwork[] = [
   },
   {
     id: 'altar',
-    slug: 'oyu',
-    title: 'Oyu',
+    slug: 'outlaw',
+    title: 'outlaw',
     medium: 'Oil on Canvas',
     edition: 'EDITION OF 111 · BLIND DROP',
     priceUsdCents: 50000,
