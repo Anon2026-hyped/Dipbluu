@@ -40,7 +40,7 @@ function LiveStamp() {
 const STATIC_ITEMS = [
   'NWUNYE ODOGWU',
   'PANIC',
-  'AFRICAN COWBOY',
+  'OUTLAW',
   '333 EDITIONS',
   'A BLIND DROP',
   'BOANERGES',

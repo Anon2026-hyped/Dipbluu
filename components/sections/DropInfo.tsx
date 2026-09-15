@@ -134,7 +134,7 @@ export function DropInfo() {
           }}
         >
           Last month, I unveiled three new works as part of my latest collection. Nwunye Odogwu,
-          Panic, and African Cowboy — collectively forming the brotherhood, now sit at the centre of
+          Panic, and Outlaw — collectively forming the brotherhood, now sit at the centre of
           this blind drop.
         </p>
 
@@ -143,7 +143,7 @@ export function DropInfo() {
           {[
             { label: 'NWUNYE ODOGWU', slug: 'nwunye-odogwu' },
             { label: 'PANIC', slug: 'panic' },
-            { label: 'AFRICAN COWBOY', slug: 'african-cowboy' },
+            { label: 'OUTLAW', slug: 'oyu' },
           ].map(({ label, slug }) => (
             <Link
               key={slug}

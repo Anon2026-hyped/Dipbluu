@@ -33,12 +33,12 @@ export const artworks: Artwork[] = [
   },
   {
     id: 'altar',
-    slug: 'african-cowboy',
-    title: 'African Cowboy',
+    slug: 'oyu',
+    title: 'Oyu',
     medium: 'Oil on Canvas',
     edition: 'EDITION OF 111 · BLIND DROP',
     priceUsdCents: 50000,
-    imageUrl: `${IMG}/IMG_1094(1).jpg`,
+    imageUrl: `${IMG}/IMG_2033.jpeg`,
   },
   {
     id: 'flame',

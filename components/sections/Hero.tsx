@@ -10,7 +10,7 @@ const IMAGES: { src: string; alt: string }[] = [
   { src: `${IMG}/Hero(1).jpg`, alt: 'Chaos in Eko' },
   { src: `${IMG}/IMG_1089(1).jpg`, alt: 'Nwunye Odogwu' },
   { src: `${IMG}/IMG_1093(1).jpg`, alt: 'Panic' },
-  { src: `${IMG}/IMG_1094(1).jpg`, alt: 'African Cowboy' },
+  { src: `${IMG}/IMG_2033.jpeg`, alt: 'Oyu' },
   { src: `${IMG}/IMG_1095(1).jpg`, alt: 'The Watcher' },
   { src: `${IMG}/IMG_1097(1).jpg`, alt: 'The Guardian' },
   { src: `${IMG}/IMG_1098(1).jpg`, alt: 'Die Lit' },
