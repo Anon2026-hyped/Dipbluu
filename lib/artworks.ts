@@ -10,7 +10,7 @@ export const artworks: Artwork[] = [
     title: 'Chaos in Eko',
     medium: 'Oil on Canvas',
     edition: 'EDITION OF 111 · BLIND DROP',
-    priceUsdCents: 200000,
+    priceUsdCents: 100000,
     imageUrl: `${IMG}/Hero(1).jpg`,
   },
   {
